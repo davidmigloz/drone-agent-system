@@ -2,23 +2,18 @@ package com.davidflex.supermarket.ontologies.ecommerce.elements;
 
 import jade.content.Concept;
 
-public class Item implements Concept {
+public abstract class Item implements Concept {
 	private static final long serialVersionUID = 1L;
 
 	private int quantity;
 	private float price;
 
-	public Item() {
-	}
-
-	public Item(int quantiy) {
-		setQuantity(quantity);
-	}
-
-	public Item(int quantiy, float price) {
+	public Item(int quantity, float price) {
 		setQuantity(quantity);
 		setPrice(price);
 	}
+
+	public abstract String getCategory();
 
 	public int getQuantity() {
 		return quantity;

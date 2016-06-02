@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.paella.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
 
-public class OliveOil extends Item {
+public class OliveOil extends PaellaItem {
 	private static final long serialVersionUID = 1L;
-
-	public OliveOil(int quantiy) {
-		super(quantiy);
-	}
 	
-	public OliveOil(int quantiy, float price) {
-		super(quantiy, price);
+	public OliveOil(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return PaellaOntologyVocabulary.OLIVEOIL;
 	}
 }

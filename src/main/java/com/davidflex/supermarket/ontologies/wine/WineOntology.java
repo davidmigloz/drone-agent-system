@@ -7,7 +7,7 @@ import jade.content.onto.BeanOntology;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 
-public class WineOntology extends BeanOntology {
+public class WineOntology extends BeanOntology implements WineOntologyVocabulary {
 	private static final long serialVersionUID = 1L;
 
 	public static final String ONTOLOGY_NAME = "WineOntology";

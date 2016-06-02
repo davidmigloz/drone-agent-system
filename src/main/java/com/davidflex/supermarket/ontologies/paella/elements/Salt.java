@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.paella.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
 
-public class Salt extends Item {
+public class Salt extends PaellaItem {
 	private static final long serialVersionUID = 1L;
-
-	public Salt(int quantiy) {
-		super(quantiy);
-	}
 	
-	public Salt(int quantiy, float price) {
-		super(quantiy, price);
+	public Salt(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return PaellaOntologyVocabulary.SALT;
 	}
 }

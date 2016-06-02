@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.wine.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.wine.WineOntologyVocabulary;
 
-public class FerrerBobet extends Item {
+public class FerrerBobet extends WineItem {
 	private static final long serialVersionUID = 1L;
-
-	public FerrerBobet(int quantiy) {
-		super(quantiy);
-	}
 	
-	public FerrerBobet(int quantiy, float price) {
-		super(quantiy, price);
+	public FerrerBobet(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return WineOntologyVocabulary.FERRER;
 	}
 }

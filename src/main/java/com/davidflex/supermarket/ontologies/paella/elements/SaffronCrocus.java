@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.paella.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
 
-public class SaffronCrocus extends Item {
+public class SaffronCrocus extends PaellaItem {
 	private static final long serialVersionUID = 1L;
-
-	public SaffronCrocus(int quantiy) {
-		super(quantiy);
-	}
 	
-	public SaffronCrocus(int quantiy, float price) {
-		super(quantiy, price);
+	public SaffronCrocus(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return PaellaOntologyVocabulary.SAFFRON;
 	}
 }

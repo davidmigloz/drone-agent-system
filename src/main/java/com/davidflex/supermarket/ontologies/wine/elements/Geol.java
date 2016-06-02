@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.wine.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.wine.WineOntologyVocabulary;
 
-public class Geol extends Item {
+public class Geol extends WineItem {
 	private static final long serialVersionUID = 1L;
-
-	public Geol(int quantiy) {
-		super(quantiy);
-	}
 	
-	public Geol(int quantiy, float price) {
-		super(quantiy, price);
+	public Geol(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return WineOntologyVocabulary.GEOL;
 	}
 }

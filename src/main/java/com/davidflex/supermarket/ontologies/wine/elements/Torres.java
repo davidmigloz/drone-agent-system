@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.wine.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.wine.WineOntologyVocabulary;
 
-public class Torres extends Item {
+public class Torres extends WineItem {
 	private static final long serialVersionUID = 1L;
-
-	public Torres(int quantiy) {
-		super(quantiy);
-	}
 	
-	public Torres(int quantiy, float price) {
-		super(quantiy, price);
+	public Torres(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return WineOntologyVocabulary.TORRES;
 	}
 }

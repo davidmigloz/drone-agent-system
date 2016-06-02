@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.paella.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
 
-public class GreenBean extends Item {
+public class GreenBean extends PaellaItem {
 	private static final long serialVersionUID = 1L;
 
-	public GreenBean(int quantiy) {
-		super(quantiy);
+	public GreenBean(int quantity, float price) {
+		super(quantity, price);
 	}
 
-	public GreenBean(int quantiy, float price) {
-		super(quantiy, price);
+	@Override
+	public String toString() {
+		return PaellaOntologyVocabulary.GREENBEA;
 	}
 }

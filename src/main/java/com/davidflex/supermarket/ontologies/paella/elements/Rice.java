@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.paella.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
 
-public class Rice extends Item{
+public class Rice extends PaellaItem{
 	private static final long serialVersionUID = 1L;
-
-	public Rice(int quantiy) {
-		super(quantiy);
-	}
 	
-	public Rice(int quantiy, float price) {
-		super(quantiy, price);
+	public Rice(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return PaellaOntologyVocabulary.RICE;
 	}
 }

@@ -1,15 +1,16 @@
 package com.davidflex.supermarket.ontologies.wine.elements;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.wine.WineOntologyVocabulary;
 
-public class AdegaDoMoucho extends Item {
+public class AdegaDoMoucho extends WineItem {
 	private static final long serialVersionUID = 1L;
-
-	public AdegaDoMoucho(int quantiy) {
-		super(quantiy);
-	}
 	
-	public AdegaDoMoucho(int quantiy, float price) {
-		super(quantiy, price);
+	public AdegaDoMoucho(int quantity, float price) {
+		super(quantity, price);
+	}
+
+	@Override
+	public String toString() {
+		return WineOntologyVocabulary.ADEGA;
 	}
 }
