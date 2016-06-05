@@ -9,6 +9,10 @@ public class SaffronCrocus extends PaellaItem {
 		super(quantity, price);
 	}
 
+	public SaffronCrocus(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.SAFFRON;

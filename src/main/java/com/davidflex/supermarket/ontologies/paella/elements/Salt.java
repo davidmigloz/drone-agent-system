@@ -9,6 +9,10 @@ public class Salt extends PaellaItem {
 		super(quantity, price);
 	}
 
+	public Salt(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.SALT;

@@ -9,6 +9,10 @@ public class Galia extends WineItem {
 		super(quantity, price);
 	}
 
+	public Galia(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.GALIA;

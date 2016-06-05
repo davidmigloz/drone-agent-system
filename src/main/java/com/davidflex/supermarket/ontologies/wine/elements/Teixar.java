@@ -9,6 +9,10 @@ public class Teixar extends WineItem {
 		super(quantity, price);
 	}
 
+	public Teixar(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.TEIXAR;

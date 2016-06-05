@@ -7,10 +7,17 @@ public abstract class Item implements Concept {
 
 	private int quantity;
 	private float price;
+	private float maxPrice;
+	private String status;
 
 	public Item(int quantity, float price) {
 		setQuantity(quantity);
 		setPrice(price);
+	}
+
+	public Item(float maxPrice, int quantity) {
+		this.maxPrice = maxPrice;
+		this.quantity = quantity;
 	}
 
 	public abstract String getCategory();
@@ -29,5 +36,21 @@ public abstract class Item implements Concept {
 
 	public void setPrice(float price) {
 		this.price = price;
+	}
+
+	public float getMaxPrice() {
+		return maxPrice;
+	}
+
+	public void setMaxPrice(float maxPrice) {
+		this.maxPrice = maxPrice;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

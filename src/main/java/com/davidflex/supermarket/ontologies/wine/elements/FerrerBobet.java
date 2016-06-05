@@ -9,6 +9,10 @@ public class FerrerBobet extends WineItem {
 		super(quantity, price);
 	}
 
+	public FerrerBobet(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.FERRER;

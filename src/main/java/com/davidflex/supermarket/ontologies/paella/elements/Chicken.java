@@ -9,6 +9,10 @@ public class Chicken extends PaellaItem {
 		super(quantity, price);
 	}
 
+	public Chicken(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.CHICKEN;

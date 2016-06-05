@@ -9,6 +9,10 @@ public class Rabbit extends PaellaItem {
 		super(quantity, price);
 	}
 
+	public Rabbit(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.RABBIT;

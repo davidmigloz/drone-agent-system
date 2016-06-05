@@ -9,6 +9,10 @@ public class SentitsNegres extends WineItem {
 		super(quantity, price);
 	}
 
+	public SentitsNegres(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.SENTITS;

@@ -9,6 +9,10 @@ public class GreenBean extends PaellaItem {
 		super(quantity, price);
 	}
 
+	public GreenBean(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.GREENBEA;

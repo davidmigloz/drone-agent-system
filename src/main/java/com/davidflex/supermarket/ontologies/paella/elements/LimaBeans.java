@@ -9,6 +9,10 @@ public class LimaBeans extends PaellaItem {
 		super(quantity, price);
 	}
 
+	public LimaBeans(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.LIMABEAN;

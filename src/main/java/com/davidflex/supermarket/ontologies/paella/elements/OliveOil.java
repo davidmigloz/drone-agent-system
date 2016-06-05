@@ -9,6 +9,10 @@ public class OliveOil extends PaellaItem {
 		super(quantity, price);
 	}
 
+	public OliveOil(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.OLIVEOIL;

@@ -9,6 +9,10 @@ public class Torres extends WineItem {
 		super(quantity, price);
 	}
 
+	public Torres(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.TORRES;

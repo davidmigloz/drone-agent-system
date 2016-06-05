@@ -9,6 +9,10 @@ public class Numanthia extends WineItem {
 		super(quantity, price);
 	}
 
+	public Numanthia(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.NUMANTH;

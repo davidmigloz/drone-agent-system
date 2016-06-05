@@ -9,6 +9,10 @@ public class Rice extends PaellaItem{
 		super(quantity, price);
 	}
 
+	public Rice(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return PaellaOntologyVocabulary.RICE;

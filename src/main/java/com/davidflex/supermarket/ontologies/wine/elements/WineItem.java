@@ -9,6 +9,10 @@ public class WineItem extends Item{
         super(quantity, price);
     }
 
+    public WineItem(float maxPrice, int quantity) {
+        super(maxPrice, quantity);
+    }
+
     public String getCategory() {
         return CATEGORY;
     }

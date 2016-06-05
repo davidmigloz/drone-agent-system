@@ -9,6 +9,10 @@ public class Geol extends WineItem {
 		super(quantity, price);
 	}
 
+	public Geol(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.GEOL;

@@ -9,6 +9,10 @@ public class Plazuela extends WineItem {
 		super(quantity, price);
 	}
 
+	public Plazuela(float maxPrice, int quantity) {
+		super(maxPrice, quantity);
+	}
+
 	@Override
 	public String toString() {
 		return WineOntologyVocabulary.PLAZUEL;

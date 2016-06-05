@@ -9,6 +9,10 @@ public class PaellaItem extends Item {
         super(quantity, price);
     }
 
+    public PaellaItem(float maxPrice, int quantity) {
+        super(maxPrice, quantity);
+    }
+
     public String getCategory() {
         return CATEGORY;
     }

@@ -11,9 +11,16 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class PersonAgentGui extends Application implements PaellaOntologyVocabulary, WineOntologyVocabulary{
+import java.io.IOException;
+
+/**
+ * Main application.
+ */
+public class CustomerGui extends Application implements PaellaOntologyVocabulary, WineOntologyVocabulary{
 
     private final ObservableList<String> categories = FXCollections.observableArrayList(PAELLA, WINE);
 
@@ -28,7 +35,7 @@ public class PersonAgentGui extends Application implements PaellaOntologyVocabul
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/gui.fxml"));
+        loader.setLocation(getClass().getResource("/fxml/gui.fxml"));
         Parent root = loader.load();
 
         primaryStage.setTitle("Personal Agent");
@@ -39,92 +46,115 @@ public class PersonAgentGui extends Application implements PaellaOntologyVocabul
         primaryStage.sizeToScene();
         primaryStage.centerOnScreen();
 
-        PersonAgentGuiController controller = loader.getController();
+        CustomerGuiController controller = loader.getController();
         controller.setData(this);
 
         primaryStage.show();
     }
 
-    public ObservableList<String> getCategories() {
+    @SuppressWarnings("ConstantConditions")
+    void openNewOrderWindow(String windowTitle) {
+        // Load the fxml file and create a new stage for the popup dialog
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/fxml/personalAgentGui.fxml"));
+        AnchorPane page = null;
+        try {
+            page = loader.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // Create the dialog Stage
+        Stage dialogStage = new Stage();
+        dialogStage.setTitle(windowTitle);
+        dialogStage.initModality(Modality.WINDOW_MODAL);
+        Scene scene = new Scene(page);
+        dialogStage.setScene(scene);
+        // Show the dialog
+        dialogStage.show();
+    }
+
+    ObservableList<String> getCategories() {
         return categories;
     }
 
-    public ObservableList<String> getPaellaItems() {
+    ObservableList<String> getPaellaItems() {
         return paellaItems;
     }
 
-    public ObservableList<String> getWineItems() {
+    ObservableList<String> getWineItems() {
         return wineItems;
     }
 
-    public ObservableList<Item> getItemsToBuy() {
+    ObservableList<Item> getItemsToBuy() {
         return itemsToBuy;
     }
 
-    public void addItemToBut(String item, String category, int quantity, int maxPrice) {
+    /**
+     * Add an item to the itemsToBuy list.
+     */
+    void addItemToBut(String item, String category, int quantity, long maxPrice) {
         Item newItem = null;
-
         if(category.equals("Paella")) {
             switch (item) {
                 case CHICKEN:
-                    newItem = new Chicken(quantity, maxPrice);
+                    newItem = new Chicken(maxPrice, quantity);
                     break;
                 case GREENBEA:
-                    newItem = new GreenBean(quantity, maxPrice);
+                    newItem = new GreenBean(maxPrice, quantity);
                     break;
                 case LIMABEAN:
-                    newItem = new LimaBeans(quantity, maxPrice);
+                    newItem = new LimaBeans(maxPrice, quantity);
                     break;
                 case OLIVEOIL:
-                    newItem = new OliveOil(quantity, maxPrice);
+                    newItem = new OliveOil(maxPrice, quantity);
                     break;
                 case RABBIT:
-                    newItem = new Rabbit(quantity, maxPrice);
+                    newItem = new Rabbit(maxPrice, quantity);
                     break;
                 case RICE:
-                    newItem = new Rabbit(quantity, maxPrice);
+                    newItem = new Rabbit(maxPrice, quantity);
                     break;
                 case SAFFRON:
-                    newItem = new SaffronCrocus(quantity, maxPrice);
+                    newItem = new SaffronCrocus(maxPrice, quantity);
                     break;
                 case SALT:
-                    newItem = new Salt(quantity, maxPrice);
+                    newItem = new Salt(maxPrice, quantity);
                     break;
                 case TOMATO:
-                    newItem = new Tomato(quantity, maxPrice);
+                    newItem = new Tomato(maxPrice, quantity);
                     break;
             }
         } else if(category.equals("Wine")){
             switch (item) {
                 case ADEGA:
-                    newItem = new AdegaDoMoucho(quantity, maxPrice);
+                    newItem = new AdegaDoMoucho(maxPrice, quantity);
                     break;
                 case FERRER:
-                    newItem = new FerrerBobet(quantity, maxPrice);
+                    newItem = new FerrerBobet(maxPrice, quantity);
                     break;
                 case GALIA:
-                    newItem = new Galia(quantity, maxPrice);
+                    newItem = new Galia(maxPrice, quantity);
                     break;
                 case GEOL:
-                    newItem = new Geol(quantity, maxPrice);
+                    newItem = new Geol(maxPrice, quantity);
                     break;
                 case GRAMONA:
-                    newItem = new Gramona(quantity, maxPrice);
+                    newItem = new Gramona(maxPrice, quantity);
                     break;
                 case NUMANTH:
-                    newItem = new Numanthia(quantity, maxPrice);
+                    newItem = new Numanthia(maxPrice, quantity);
                     break;
                 case PLAZUEL:
-                    newItem = new Plazuela(quantity, maxPrice);
+                    newItem = new Plazuela(maxPrice, quantity);
                     break;
                 case SENTITS:
-                    newItem = new SentitsNegres(quantity, maxPrice);
+                    newItem = new SentitsNegres(maxPrice, quantity);
                     break;
                 case TEIXAR:
-                    newItem = new Teixar(quantity, maxPrice);
+                    newItem = new Teixar(maxPrice, quantity);
                     break;
                 case TORRES:
-                    newItem = new Torres(quantity, maxPrice);
+                    newItem = new Torres(maxPrice, quantity);
                     break;
             }
         }
