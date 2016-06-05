@@ -1,4 +1,4 @@
-package com.davidflex.supermarket.agents.gui;
+package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
 import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
@@ -13,7 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class PersonalAgentGui extends Application implements PaellaOntologyVocabulary, WineOntologyVocabulary{
+public class PersonAgentGui extends Application implements PaellaOntologyVocabulary, WineOntologyVocabulary{
 
     private final ObservableList<String> categories = FXCollections.observableArrayList(PAELLA, WINE);
 
@@ -39,7 +39,7 @@ public class PersonalAgentGui extends Application implements PaellaOntologyVocab
         primaryStage.sizeToScene();
         primaryStage.centerOnScreen();
 
-        PersonalAgentGuiController controller = loader.getController();
+        PersonAgentGuiController controller = loader.getController();
         controller.setData(this);
 
         primaryStage.show();
@@ -129,9 +129,5 @@ public class PersonalAgentGui extends Application implements PaellaOntologyVocab
             }
         }
         itemsToBuy.add(newItem);
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }

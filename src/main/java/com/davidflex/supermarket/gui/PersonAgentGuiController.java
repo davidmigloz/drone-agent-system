@@ -1,4 +1,4 @@
-package com.davidflex.supermarket.agents.gui;
+package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
 import javafx.beans.property.SimpleStringProperty;
@@ -6,9 +6,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-public class PersonalAgentGuiController {
+public class PersonAgentGuiController {
 
-    private PersonalAgentGui personalAgentGui;
+    private PersonAgentGui personAgentGui;
 
     @FXML
     private ComboBox<String> category;
@@ -43,24 +43,24 @@ public class PersonalAgentGuiController {
         maxPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPrice() + "€"));
     }
 
-    public void setData(PersonalAgentGui personalAgentGui) {
-        this.personalAgentGui = personalAgentGui;
-        category.setItems(personalAgentGui.getCategories());
-        product.setItems(personalAgentGui.getPaellaItems());
-        table.setItems(personalAgentGui.getItemsToBuy());
+    void setData(PersonAgentGui personAgentGui) {
+        this.personAgentGui = personAgentGui;
+        category.setItems(personAgentGui.getCategories());
+        product.setItems(personAgentGui.getPaellaItems());
+        table.setItems(personAgentGui.getItemsToBuy());
     }
 
     private void handleSelectCategory(ActionEvent event) {
         String selectedCategory = category.getSelectionModel().getSelectedItem();
         if(selectedCategory.equals("Paella")) {
-            product.setItems(personalAgentGui.getPaellaItems());
+            product.setItems(personAgentGui.getPaellaItems());
         } else if (selectedCategory.equals("Wine")){
-            product.setItems(personalAgentGui.getWineItems());
+            product.setItems(personAgentGui.getWineItems());
         }
     }
 
     private void handleAddButton(ActionEvent event) {
-        personalAgentGui.addItemToBut(product.getSelectionModel().getSelectedItem(),
+        personAgentGui.addItemToBut(product.getSelectionModel().getSelectedItem(),
                 category.getSelectionModel().getSelectedItem(),
                 Integer.parseInt(quantity.getText()), Integer.parseInt(maxPrice.getText()));
     }
