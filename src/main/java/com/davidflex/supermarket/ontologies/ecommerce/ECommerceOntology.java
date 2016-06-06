@@ -9,9 +9,8 @@ import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRequest;
  * Based on Giovanni Caire's ECommerceOntology. 
  */
 public class ECommerceOntology extends BeanOntology implements ECommerceOntologyVocabulary {
-	private static final long serialVersionUID = 1L;
 
-	public static final String ONTOLOGY_NAME = "ECommerceOntology";
+	private static final long serialVersionUID = 1L;
 
 	// The singleton instance of this ontology
 	private static Ontology instance;
@@ -24,7 +23,7 @@ public class ECommerceOntology extends BeanOntology implements ECommerceOntology
 		add(pkgname);
 	}
 	
-	public synchronized final static Ontology getInstance() throws BeanOntologyException {
+	public synchronized static Ontology getInstance() throws BeanOntologyException {
 		if (instance == null) {
 			instance = new ECommerceOntology();
 		}

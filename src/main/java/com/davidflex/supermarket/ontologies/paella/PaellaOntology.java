@@ -8,9 +8,8 @@ import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 
 public class PaellaOntology extends BeanOntology implements PaellaOntologyVocabulary{
-	private static final long serialVersionUID = 1L;
 
-	public static final String ONTOLOGY_NAME = "PaellaOntology";
+	private static final long serialVersionUID = 1L;
 
 	// The singleton instance of this ontology
 	private static Ontology instance;
@@ -23,7 +22,7 @@ public class PaellaOntology extends BeanOntology implements PaellaOntologyVocabu
 		add(pkgname);
 	}
 	
-	public synchronized final static Ontology getInstance() throws BeanOntologyException {
+	public synchronized static Ontology getInstance() throws BeanOntologyException {
 		if (instance == null) {
 			instance = new PaellaOntology();
 		}

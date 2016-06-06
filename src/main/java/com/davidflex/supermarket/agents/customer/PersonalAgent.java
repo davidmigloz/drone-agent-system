@@ -1,9 +1,16 @@
 package com.davidflex.supermarket.agents.customer;
 
-import com.davidflex.supermarket.gui.CustomerGuiController;
+import com.davidflex.supermarket.agents.behaviours.ContactBehaviour;
 import com.davidflex.supermarket.gui.CustomerGuiActionsAdapter;
 import com.davidflex.supermarket.gui.PersonalAgentGuiActionsAdapter;
+import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntology;
+import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
+import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
+import jade.content.onto.BeanOntologyException;
+import jade.content.onto.Ontology;
 import jade.core.Agent;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,12 +24,24 @@ import java.util.List;
 
 public class PersonalAgent extends Agent {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerGuiController.class);
+    private static final Logger logger = LoggerFactory.getLogger(PersonalAgent.class);
+
+    private Codec codec;
+    private Ontology ontology;
 
     private int orderNumber;
-    private int x;
-    private int y;
+    private Location location;
     private ObservableList<Item> items;
+
+    public PersonalAgent() {
+        codec = new SLCodec();
+        try {
+            ontology = ECommerceOntology.getInstance();
+        } catch (BeanOntologyException e) {
+            logger.error("Ontology error!", e);
+            doDelete();
+        }
+    }
 
     @SuppressWarnings({"unchecked", "StatementWithEmptyBody"})
     @Override
@@ -31,16 +50,15 @@ public class PersonalAgent extends Agent {
         Object[] args = getArguments();
         if (args != null && args.length == 3) {
             orderNumber = Integer.parseInt((String) args[0]);
-            x = Integer.parseInt((String) args[1]);
-            y = Integer.parseInt((String) args[2]);
-            logger.debug("Arg: {} {} {}", orderNumber, x, y);
+            location = new Location(Integer.parseInt((String) args[1]), Integer.parseInt((String) args[2]));
+            logger.debug("Arg: {} {} {}", orderNumber, location.getX(), location.getY());
         } else {
             logger.error("Agent " + getLocalName() + " - Incorrect number of arguments");
             doDelete();
         }
         // Read items to buy
-        try(FileInputStream fin = new FileInputStream("order" + orderNumber + ".txt");
-            ObjectInputStream ois = new ObjectInputStream(fin)) {
+        try (FileInputStream fin = new FileInputStream("order" + orderNumber + ".txt");
+             ObjectInputStream ois = new ObjectInputStream(fin)) {
             List<Item> list = (List<Item>) ois.readObject();
             items = FXCollections.observableList(list);
         } catch (ClassNotFoundException | IOException e) {
@@ -50,7 +68,17 @@ public class PersonalAgent extends Agent {
         // Open window
         CustomerGuiActionsAdapter.actionCreateNewWindow("Personal Agent - Order #" + orderNumber);
         // Set items
-        while(PersonalAgentGuiActionsAdapter.isInstanceNull(orderNumber)) {}
+        while (PersonalAgentGuiActionsAdapter.isInstanceNull(orderNumber)) {}
         PersonalAgentGuiActionsAdapter.actionSetItems(orderNumber, items);
+        // Contact shop
+        addBehaviour(new ContactBehaviour(this, location, ECommerceOntologyVocabulary.SHOP_NAME));
+    }
+
+    public Codec getCodec() {
+        return codec;
+    }
+
+    public Ontology getOntology() {
+        return ontology;
     }
 }
