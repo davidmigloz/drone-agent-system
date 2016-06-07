@@ -28,12 +28,10 @@ public class ContactBehaviour extends OneShotBehaviour {
     private static final Logger logger = LoggerFactory.getLogger(ContactBehaviour.class);
 
     private Location location;
-    private String shopName;
 
-    public ContactBehaviour(Agent a, Location location, String shopName) {
+    public ContactBehaviour(Agent a, Location location) {
         super(a);
         this.location = location;
-        this.shopName = shopName;
     }
 
     public void action() {
@@ -42,15 +40,53 @@ public class ContactBehaviour extends OneShotBehaviour {
             AID shopAgent;
             DFAgentDescription[] result =
                     DFUtils.searchInDFbyType(ECommerceOntologyVocabulary.SHOP_TYPE, myAgent);
-            if(result.length > 0) {
+            if (result.length > 0) {
                 shopAgent = result[0].getName();
             } else {
                 logger.error("No shops of given type");
                 ((PersonalAgent) myAgent).cancelOrder("No shops available.");
                 return;
             }
-            // Prepare message
+
+            // Contact shop
             logger.info("Contacting shop...");
+            ((PersonalAgent) myAgent).print("Contacting " + shopAgent.getLocalName() + "..." );
+            sendMessageShop(shopAgent);
+
+            // Wait reply
+            logger.info("Waiting answer from shop...");
+            MessageTemplate mt = MessageTemplate.MatchSender(shopAgent);
+            ACLMessage msg = getAgent().blockingReceive(mt);
+            if (msg != null) {
+                ContentElement ce = getAgent().getContentManager().extractContent(msg);
+                if (ce instanceof ContactResponse) {
+                    // Read content
+                    ContactResponse cr = (ContactResponse) ce;
+                    AID personalShopAgent = cr.getPersonalShopAgent();
+                    logger.info("Got response from shop. PSA: " + personalShopAgent.getLocalName());
+                    ((PersonalAgent) myAgent).print("Request accepted!" );
+                    ((PersonalAgent) myAgent).print(personalShopAgent.getLocalName() + " assigned to the order." );
+                    // Start buying procces
+
+                } else {
+                    logger.error("Wrong message received.");
+                }
+            } else {
+                logger.error("Corrupted message received.");
+            }
+        } catch (FIPAException e) {
+            logger.error("Error with DF", e);
+        } catch (Codec.CodecException | OntologyException e) {
+            logger.error("Error filling msg.", e);
+        }
+    }
+
+    /**
+     * Sends a ContactRequest to the shop.
+     */
+    private void sendMessageShop(AID shopAgent) {
+        try {
+            // Prepare message
             ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
             msg.setSender(getAgent().getAID());
             msg.addReceiver(shopAgent);
@@ -61,28 +97,6 @@ public class ContactBehaviour extends OneShotBehaviour {
             getAgent().getContentManager().fillContent(msg, request);
             // Send message
             getAgent().send(msg);
-            // Get answer
-            logger.info("Waiting answer from shop...");
-            MessageTemplate mt = MessageTemplate.MatchSender(shopAgent);
-            msg = getAgent().blockingReceive(mt);
-            if (msg != null) {
-                ContentElement ce = getAgent().getContentManager().extractContent(msg);
-                if (ce instanceof ContactResponse) {
-                    logger.info("Got response from shop.");
-                    // Read content
-                    ContactResponse cr = (ContactResponse) ce;
-                    AID personalShopAgent = cr.getPersonalShopAgent();
-                    logger.info("My PSA is: " + personalShopAgent.getName());
-                    // Start buying procces
-                    
-                } else {
-                    logger.error("Wrong message received.");
-                }
-            } else {
-                logger.error("Corrupted message received.");
-            }
-        } catch (FIPAException e) {
-            logger.error("Error with DF", e);
         } catch (Codec.CodecException | OntologyException e) {
             logger.error("Error filling msg.", e);
         }

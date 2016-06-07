@@ -1,17 +1,14 @@
 package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.agents.behaviours.GetOrderInfoBehaviour;
-import com.davidflex.supermarket.agents.utils.DFUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import com.davidflex.supermarket.ontologies.company.elements.Order;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntology;
-import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
-import jade.domain.FIPAException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,14 +38,6 @@ public class PersonalShopAgent extends Agent {
         getContentManager().registerLanguage(codec);
         getContentManager().registerOntology(eCommerceOntology);
         getContentManager().registerOntology(companyOntolagy);
-        // Register in DF
-        try {
-            DFUtils.registerInDF(this, ECommerceOntologyVocabulary.SHOP_NAME,
-                    ECommerceOntologyVocabulary.SHOP_TYPE);
-        } catch (FIPAException e) {
-            logger.error("Error at registering in DF", e);
-            doDelete();
-        }
         // Add behaviours
         addBehaviour(new GetOrderInfoBehaviour(this));
     }

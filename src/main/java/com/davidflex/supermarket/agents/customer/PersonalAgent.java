@@ -4,7 +4,6 @@ import com.davidflex.supermarket.agents.behaviours.ContactBehaviour;
 import com.davidflex.supermarket.gui.CustomerGuiActionsAdapter;
 import com.davidflex.supermarket.gui.PersonalAgentGuiActionsAdapter;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntology;
-import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
 import jade.content.lang.Codec;
@@ -12,7 +11,6 @@ import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
-import jade.domain.FIPANames;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -75,7 +73,7 @@ public class PersonalAgent extends Agent {
         while (PersonalAgentGuiActionsAdapter.isInstanceNull(orderNumber)) {}
         PersonalAgentGuiActionsAdapter.actionSetItems(orderNumber, items);
         // Contact shop
-        addBehaviour(new ContactBehaviour(this, location, ECommerceOntologyVocabulary.SHOP_NAME));
+        addBehaviour(new ContactBehaviour(this, location));
     }
 
     public Codec getCodec() {
@@ -86,11 +84,17 @@ public class PersonalAgent extends Agent {
         return ontology;
     }
 
+    /**
+     * Print a message in status box.
+     */
+    public void print(String msg) {
+        PersonalAgentGuiActionsAdapter.actionAppendStatusMsg(orderNumber, msg);
+    }
+
     public void cancelOrder(String reason) {
         for (Item i : items) {
             i.setStatus("Cancelled");
         }
-        String msg = "The order was cancelled: " + reason;
-        PersonalAgentGuiActionsAdapter.actionAppendStatusMsg(orderNumber, msg);
+        print("The order was cancelled: " + reason);
     }
 }

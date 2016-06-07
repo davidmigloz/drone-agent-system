@@ -27,16 +27,17 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
 
     private static final Logger logger = LoggerFactory.getLogger(ListenNewOrdersBehaviour.class);
 
-    private MessageTemplate mt;
+    private MessageTemplate mtOnto;
 
     public ListenNewOrdersBehaviour(Agent a) {
         super(a);
-        mt = MessageTemplate.MatchOntology(((ShopAgent) getAgent()).getECommerceOntology().getName());
+        mtOnto = MessageTemplate.MatchOntology(((ShopAgent) getAgent()).getECommerceOntology().getName());
     }
 
     @Override
     public void action() {
-        ACLMessage msg = getAgent().receive(mt);
+        logger.info("Start");
+        ACLMessage msg = getAgent().receive(mtOnto);
         if (msg != null) {
             try {
                 ContentElement ce = getAgent().getContentManager().extractContent(msg);
@@ -52,9 +53,7 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
                     logger.info("Assigning personalShopAgent...");
                     String personalShopAgentName = "personalShopAgent#" + orderID;
                     ((ShopAgent) getAgent()).getContainer().createNewAgent(personalShopAgentName,
-                            PersonalShopAgent.class.getName(), new Object[]{});
-
-                    Thread.sleep(1000);
+                            PersonalShopAgent.class.getName(), new Object[]{}).start();
 
                     // Send order info to PersonalShopAgent
                     logger.info("Sending order info to personalShopAgent...");
@@ -62,8 +61,8 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
                     sendInfoToPSA(personalShopAgent, orderID, cr.getBuyer(), cr.getLocation());
 
                     // Get confirmation
-                    mt = MessageTemplate.MatchSender(personalShopAgent);
-                    msg = getAgent().blockingReceive();
+                    MessageTemplate mtPSA = MessageTemplate.MatchSender(personalShopAgent);
+                    msg = getAgent().blockingReceive(mtPSA);
                     if (msg != null) {
                         // Send info to customer
                         logger.info("Sending ContactResponse to customer...");
@@ -76,12 +75,11 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
                 logger.error("Error at extracting message", e);
             } catch (StaleProxyException e) {
                 logger.error("Error at creating new personalShopAgent", e);
-            } catch (InterruptedException e) {
-                logger.error("Error at creating new personalShopAgent", e);
             }
         } else {
             block();
         }
+        logger.info("Finish");
     }
 
     /**
