@@ -1,9 +1,5 @@
 package com.davidflex.supermarket.agents.behaviours;
 
-/**
- * Inform the shop that the personalAgent wants to make an order.
- */
-
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.ContactRequest;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.ContactResponse;
@@ -21,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Inform the shop that the personalAgent wants to make an order.
+ * Used by PersonalAgent.
  */
 public class ContactBehaviour extends OneShotBehaviour {
 

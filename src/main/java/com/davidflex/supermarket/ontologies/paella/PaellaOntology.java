@@ -7,7 +7,7 @@ import jade.content.onto.BeanOntology;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 
-public class PaellaOntology extends BeanOntology implements PaellaOntologyVocabulary{
+public class PaellaOntology extends BeanOntology implements PaellaOntologyVocabulary {
 
 	private static final long serialVersionUID = 1L;
 
