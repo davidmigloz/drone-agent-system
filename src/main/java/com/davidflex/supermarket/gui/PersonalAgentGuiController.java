@@ -40,13 +40,20 @@ public class PersonalAgentGuiController implements PersonalAgentGuiActions {
         productCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().toString()));
         categoryCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategory()));
         quantityCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQuantity() + ""));
-        maxPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPrice() + "€"));
-        price.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaxPrice() + "€"));
+        maxPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaxPrice() + "€"));
+        price.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPrice() + "€"));
         status.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getStatus() != null ? cellData.getValue().getStatus() : "?"));
+        statusArea.appendText("Loading...");
     }
 
+    @Override
     public void setItems(ObservableList<Item> items) {
         Platform.runLater(() -> table.setItems(items));
+    }
+
+    @Override
+    public void appendStatusMsg(String msg) {
+        Platform.runLater(() -> statusArea.appendText("\n" + msg));
     }
 }

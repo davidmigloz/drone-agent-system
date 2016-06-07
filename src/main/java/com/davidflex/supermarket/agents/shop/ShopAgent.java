@@ -2,14 +2,18 @@ package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.agents.behaviours.ListenNewOrdersBehaviour;
 import com.davidflex.supermarket.agents.utils.DFUtils;
+import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntology;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
 import jade.content.lang.Codec;
+import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
 import jade.domain.FIPAException;
+import jade.wrapper.ContainerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,13 +28,12 @@ public class ShopAgent extends Agent {
     private Codec codec;
     private Ontology companyOntolagy;
     private Ontology eCommerceOntology;
-
-    private AtomicLong orderNum;
-    private Map activeOrders;
+    private ContainerController container;
+    private AtomicLong orderIDs;
+    private Map<Long, Location> activeOrders;
 
     public ShopAgent() {
-        orderNum = new AtomicLong();
-        activeOrders = new HashMap<>();
+        codec = new SLCodec(0); // fipa-sl0
         try {
             companyOntolagy = CompanyOntolagy.getInstance();
             eCommerceOntology = ECommerceOntology.getInstance();
@@ -38,16 +41,24 @@ public class ShopAgent extends Agent {
             logger.error("Ontology error!", e);
             doDelete();
         }
+        container = JadeUtils.createContainer("personalShopAgents");
+        orderIDs = new AtomicLong();
+        activeOrders = new HashMap<>();
     }
 
     @Override
     protected void setup() {
+        // Setup content manager
+        getContentManager().registerLanguage(codec);
+        getContentManager().registerOntology(eCommerceOntology);
+        getContentManager().registerOntology(companyOntolagy);
         // Register in DF
         try {
             DFUtils.registerInDF(this, ECommerceOntologyVocabulary.SHOP_NAME,
                     ECommerceOntologyVocabulary.SHOP_TYPE);
         } catch (FIPAException e) {
             logger.error("Error at registering in DF", e);
+            doDelete();
         }
         // Add behaviours
         addBehaviour(new ListenNewOrdersBehaviour(this));
@@ -62,11 +73,31 @@ public class ShopAgent extends Agent {
         }
     }
 
+    /**
+     * Register a new order.
+     *
+     * @param location customer location
+     * @return orderID
+     */
+    public long addNewOrder(Location location) {
+        long num = orderIDs.incrementAndGet();
+        activeOrders.put(num, location);
+        return num;
+    }
+
+    public Codec getCodec() {
+        return codec;
+    }
+
     public Ontology getCompanyOntolagy() {
         return companyOntolagy;
     }
 
     public Ontology getECommerceOntology() {
         return eCommerceOntology;
+    }
+
+    public ContainerController getContainer() {
+        return container;
     }
 }

@@ -1,8 +1,8 @@
 package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
+import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
-import jade.core.ProfileImpl;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;
@@ -58,7 +58,7 @@ public class CustomerGuiController implements CustomerGuiActions {
 
     public CustomerGuiController() {
         // Create container for personalAgents
-        container = jade.core.Runtime.instance().createAgentContainer(new ProfileImpl());
+        container = JadeUtils.createContainer("personalAgents");
         // Adapter for CustomerGuiAgent to interact with GUI
         CustomerGuiActionsAdapter.setInstance(this);
     }
@@ -70,7 +70,7 @@ public class CustomerGuiController implements CustomerGuiActions {
         productCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().toString()));
         categoryCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategory()));
         quantityCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQuantity() + ""));
-        maxPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getPrice() + "€"));
+        maxPriceCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMaxPrice() + "€"));
     }
 
     /**

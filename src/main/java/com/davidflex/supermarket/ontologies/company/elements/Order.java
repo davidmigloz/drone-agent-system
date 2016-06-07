@@ -16,6 +16,12 @@ public class Order implements Concept {
     public Order() {
     }
 
+    public Order(long id, AID buyer, Location location) {
+        this.id = id;
+        this.buyer = buyer;
+        this.location = location;
+    }
+
     public long getId() {
         return id;
     }

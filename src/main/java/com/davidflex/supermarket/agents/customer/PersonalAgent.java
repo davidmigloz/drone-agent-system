@@ -12,6 +12,7 @@ import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 import jade.core.Agent;
+import jade.domain.FIPANames;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
@@ -34,7 +35,7 @@ public class PersonalAgent extends Agent {
     private ObservableList<Item> items;
 
     public PersonalAgent() {
-        codec = new SLCodec();
+        codec = new SLCodec(0); // fipa-sl0
         try {
             ontology = ECommerceOntology.getInstance();
         } catch (BeanOntologyException e) {
@@ -46,6 +47,9 @@ public class PersonalAgent extends Agent {
     @SuppressWarnings({"unchecked", "StatementWithEmptyBody"})
     @Override
     protected void setup() {
+        // Setup content manager
+        getContentManager().registerLanguage(codec);
+        getContentManager().registerOntology(ontology);
         // Get arguments (order number)
         Object[] args = getArguments();
         if (args != null && args.length == 3) {
@@ -80,5 +84,13 @@ public class PersonalAgent extends Agent {
 
     public Ontology getOntology() {
         return ontology;
+    }
+
+    public void cancelOrder(String reason) {
+        for (Item i : items) {
+            i.setStatus("Cancelled");
+        }
+        String msg = "The order was cancelled: " + reason;
+        PersonalAgentGuiActionsAdapter.actionAppendStatusMsg(orderNumber, msg);
     }
 }

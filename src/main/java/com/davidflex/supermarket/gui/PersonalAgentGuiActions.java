@@ -8,6 +8,13 @@ import javafx.collections.ObservableList;
  */
 interface PersonalAgentGuiActions {
 
+    /**
+     * Set order items. To be displayed in the table.
+     */
     void setItems(ObservableList<Item> items);
 
+    /**
+     * Append a message in status text area.
+     */
+    void appendStatusMsg(String msg);
 }
