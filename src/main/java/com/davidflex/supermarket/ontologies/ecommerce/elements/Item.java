@@ -2,7 +2,10 @@ package com.davidflex.supermarket.ontologies.ecommerce.elements;
 
 import jade.content.Concept;
 
-public abstract class Item implements Concept {
+/**
+ * Item from the transaction.
+ */
+public abstract class Item implements Concept, Cloneable {
 	private static final long serialVersionUID = 1L;
 
 	private int quantity;
@@ -52,5 +55,15 @@ public abstract class Item implements Concept {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	@Override
+	public Item clone() {
+		try {
+			return (Item) super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

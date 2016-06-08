@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PersonalAgent extends Agent {
@@ -84,10 +85,28 @@ public class PersonalAgent extends Agent {
         return ontology;
     }
 
+    public ObservableList<Item> getObservableListItems() {
+        return items;
+    }
+
+    /**
+     * Return the list of items but without max. price and status info.
+     */
+    public List<Item> getListItems() {
+        List<Item> list = new ArrayList<>(items.size());
+        for(Item i : list) {
+            Item newItem = i.clone();
+            newItem.setMaxPrice(0);
+            newItem.setStatus("");
+            list.add(newItem);
+        }
+        return list;
+    }
+
     /**
      * Print a message in status box.
      */
-    public void print(String msg) {
+    public void printStatus(String msg) {
         PersonalAgentGuiActionsAdapter.actionAppendStatusMsg(orderNumber, msg);
     }
 
@@ -95,6 +114,6 @@ public class PersonalAgent extends Agent {
         for (Item i : items) {
             i.setStatus("Cancelled");
         }
-        print("The order was cancelled: " + reason);
+        printStatus("The order was cancelled: " + reason);
     }
 }

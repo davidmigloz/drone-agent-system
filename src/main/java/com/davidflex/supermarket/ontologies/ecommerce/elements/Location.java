@@ -5,6 +5,7 @@ import jade.content.Concept;
 /**
  * Location of the buyer.
  */
+@SuppressWarnings("unused")
 public class Location implements Concept {
 
     private int x;

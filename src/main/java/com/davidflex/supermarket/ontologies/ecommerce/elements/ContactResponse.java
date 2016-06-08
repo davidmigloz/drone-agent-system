@@ -6,6 +6,7 @@ import jade.core.AID;
 /**
  * Response from shop to a ContactRequest.
  */
+@SuppressWarnings("unused")
 public class ContactResponse implements Predicate {
 
     private AID personalShopAgent;

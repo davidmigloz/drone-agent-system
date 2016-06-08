@@ -39,18 +39,18 @@ public class ContactBehaviour extends OneShotBehaviour {
             // Look for the appropiate shop
             AID shopAgent;
             DFAgentDescription[] result =
-                    DFUtils.searchInDFbyType(ECommerceOntologyVocabulary.SHOP_TYPE, myAgent);
+                    DFUtils.searchInDFbyType(ECommerceOntologyVocabulary.SHOP_TYPE, getAgent());
             if (result.length > 0) {
                 shopAgent = result[0].getName();
             } else {
                 logger.error("No shops of given type");
-                ((PersonalAgent) myAgent).cancelOrder("No shops available.");
+                ((PersonalAgent) getAgent()).cancelOrder("No shops available.");
                 return;
             }
 
             // Contact shop
             logger.info("Contacting shop...");
-            ((PersonalAgent) myAgent).print("Contacting " + shopAgent.getLocalName() + "..." );
+            ((PersonalAgent) getAgent()).printStatus("Contacting " + shopAgent.getLocalName() + "..." );
             sendMessageShop(shopAgent);
 
             // Wait reply
@@ -64,10 +64,10 @@ public class ContactBehaviour extends OneShotBehaviour {
                     ContactResponse cr = (ContactResponse) ce;
                     AID personalShopAgent = cr.getPersonalShopAgent();
                     logger.info("Got response from shop. PSA: " + personalShopAgent.getLocalName());
-                    ((PersonalAgent) myAgent).print("Request accepted!" );
-                    ((PersonalAgent) myAgent).print(personalShopAgent.getLocalName() + " assigned to the order." );
+                    ((PersonalAgent) getAgent()).printStatus("Request accepted!" );
+                    ((PersonalAgent) getAgent()).printStatus(personalShopAgent.getLocalName() + " assigned to the order." );
                     // Start buying procces
-
+                    getAgent().addBehaviour(new NegociationBehaviour(getAgent(), personalShopAgent));
                 } else {
                     logger.error("Wrong message received.");
                 }
@@ -77,7 +77,7 @@ public class ContactBehaviour extends OneShotBehaviour {
         } catch (FIPAException e) {
             logger.error("Error with DF", e);
         } catch (Codec.CodecException | OntologyException e) {
-            logger.error("Error filling msg.", e);
+            logger.error("Error extracting msg.", e);
         }
     }
 

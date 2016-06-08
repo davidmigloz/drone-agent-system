@@ -6,7 +6,7 @@ import jade.content.onto.Ontology;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRequest;
 
 /**
- * Based on Giovanni Caire's ECommerceOntology. 
+ * ECommerceOntology.
  */
 public class ECommerceOntology extends BeanOntology implements ECommerceOntologyVocabulary {
 
