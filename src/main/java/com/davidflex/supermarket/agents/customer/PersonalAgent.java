@@ -114,7 +114,7 @@ public class PersonalAgent extends Agent {
 
     public void cancelOrder(String reason) {
         for (Item i : items) {
-            i.setStatus("Cancelled");
+            i.setStatus("Cancelled.");
         }
         printStatus("The order was cancelled: " + reason);
     }

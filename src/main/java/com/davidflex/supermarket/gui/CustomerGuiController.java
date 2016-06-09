@@ -99,9 +99,14 @@ public class CustomerGuiController implements CustomerGuiActions {
      * Add item to the itemsToBuy list.
      */
     private void handleAddButton(ActionEvent event) {
-        customerGui.addItemToBut(product.getSelectionModel().getSelectedItem(),
-                category.getSelectionModel().getSelectedItem(),
-                Integer.parseInt(quantity.getText()), Integer.parseInt(maxPrice.getText()));
+        String it = product.getSelectionModel().getSelectedItem();
+        String cat = category.getSelectionModel().getSelectedItem();
+        String q = quantity.getText();
+        String mp = maxPrice.getText();
+
+        if(cat != null && it != null && !q.equals("") && !mp.equals("")) {
+            customerGui.addItemToBut(it, cat, Integer.parseInt(q), Integer.parseInt(mp));
+        }
     }
 
     /**
@@ -109,6 +114,9 @@ public class CustomerGuiController implements CustomerGuiActions {
      */
     @FXML
     private void handleBuy() {
+        if(customerGui.getItemsToBuy().size() == 0 || x.getText().equals("") || y.getText().equals("")) {
+            return;
+        }
         try {
             // Get number of order
             int num = orderCounter.getAndIncrement();

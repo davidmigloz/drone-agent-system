@@ -1,8 +1,8 @@
 package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
-import com.davidflex.supermarket.ontologies.shop.paella.*;
 import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.shop.paella.*;
 import com.davidflex.supermarket.ontologies.shop.wine.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -15,6 +15,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Main application.
@@ -24,7 +26,7 @@ public class CustomerGui extends Application implements ShopOntologyVocabulary {
     private final ObservableList<String> categories = FXCollections.observableArrayList(PAELLA, WINE);
 
     private final ObservableList<String> paellaItems = FXCollections.observableArrayList(
-                    CHICKEN, GREENBEA, LIMABEAN, OLIVEOIL, RABBIT, RICE, SAFFRON, SALT, TOMATO);
+            CHICKEN, GREENBEA, LIMABEAN, OLIVEOIL, RABBIT, RICE, SAFFRON, SALT, TOMATO);
 
     private final ObservableList<String> wineItems = FXCollections.observableArrayList(
             ADEGA, FERRER, GALIA, GEOL, GRAMONA, NUMANTH, PLAZUEL, SENTITS, TEIXAR, TORRES);
@@ -92,71 +94,134 @@ public class CustomerGui extends Application implements ShopOntologyVocabulary {
      * Add an item to the itemsToBuy list.
      */
     void addItemToBut(String item, String category, int quantity, long maxPrice) {
-        Item newItem = null;
-        if(category.equals("Paella")) {
+        if (category.equals("Paella")) {
             switch (item) {
                 case CHICKEN:
-                    newItem = new Chicken(maxPrice, quantity);
+                    if (!increaseQuantity(Chicken.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Chicken(maxPrice, quantity));
+                    }
                     break;
                 case GREENBEA:
-                    newItem = new GreenBean(maxPrice, quantity);
+                    if (!increaseQuantity(GreenBean.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new GreenBean(maxPrice, quantity));
+                    }
                     break;
                 case LIMABEAN:
-                    newItem = new LimaBeans(maxPrice, quantity);
+                    if (!increaseQuantity(LimaBeans.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new LimaBeans(maxPrice, quantity));
+                    }
                     break;
                 case OLIVEOIL:
-                    newItem = new OliveOil(maxPrice, quantity);
+                    if (!increaseQuantity(OliveOil.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new OliveOil(maxPrice, quantity));
+                    }
                     break;
                 case RABBIT:
-                    newItem = new Rabbit(maxPrice, quantity);
+                    if (!increaseQuantity(Rabbit.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Rabbit(maxPrice, quantity));
+                    }
                     break;
                 case RICE:
-                    newItem = new Rabbit(maxPrice, quantity);
+                    if (!increaseQuantity(Rabbit.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Rabbit(maxPrice, quantity));
+                    }
                     break;
                 case SAFFRON:
-                    newItem = new SaffronCrocus(maxPrice, quantity);
+                    if (!increaseQuantity(SaffronCrocus.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new SaffronCrocus(maxPrice, quantity));
+                    }
                     break;
                 case SALT:
-                    newItem = new Salt(maxPrice, quantity);
+                    if (!increaseQuantity(Salt.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Salt(maxPrice, quantity));
+                    }
                     break;
                 case TOMATO:
-                    newItem = new Tomato(maxPrice, quantity);
+                    if (!increaseQuantity(Tomato.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Tomato(maxPrice, quantity));
+                    }
                     break;
             }
-        } else if(category.equals("Wine")){
+        } else if (category.equals("Wine")) {
             switch (item) {
                 case ADEGA:
-                    newItem = new AdegaDoMoucho(maxPrice, quantity);
+                    if (!increaseQuantity(AdegaDoMoucho.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new AdegaDoMoucho(maxPrice, quantity));
+                    }
                     break;
                 case FERRER:
-                    newItem = new FerrerBobet(maxPrice, quantity);
+                    if (!increaseQuantity(FerrerBobet.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new FerrerBobet(maxPrice, quantity));
+                    }
                     break;
                 case GALIA:
-                    newItem = new Galia(maxPrice, quantity);
+                    if (!increaseQuantity(Galia.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Galia(maxPrice, quantity));
+                    }
                     break;
                 case GEOL:
-                    newItem = new Geol(maxPrice, quantity);
+                    if (!increaseQuantity(Geol.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Geol(maxPrice, quantity));
+                    }
                     break;
                 case GRAMONA:
-                    newItem = new Gramona(maxPrice, quantity);
+                    if (!increaseQuantity(Gramona.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Gramona(maxPrice, quantity));
+                    }
                     break;
                 case NUMANTH:
-                    newItem = new Numanthia(maxPrice, quantity);
+                    if (!increaseQuantity(Numanthia.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Numanthia(maxPrice, quantity));
+                    }
                     break;
                 case PLAZUEL:
-                    newItem = new Plazuela(maxPrice, quantity);
+                    if (!increaseQuantity(Plazuela.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Plazuela(maxPrice, quantity));
+                    }
                     break;
                 case SENTITS:
-                    newItem = new SentitsNegres(maxPrice, quantity);
+                    if (!increaseQuantity(SentitsNegres.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new SentitsNegres(maxPrice, quantity));
+                    }
                     break;
                 case TEIXAR:
-                    newItem = new Teixar(maxPrice, quantity);
+                    if (!increaseQuantity(Teixar.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Teixar(maxPrice, quantity));
+                    }
                     break;
                 case TORRES:
-                    newItem = new Torres(maxPrice, quantity);
+                    if (!increaseQuantity(Torres.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Torres(maxPrice, quantity));
+                    }
                     break;
             }
         }
-        itemsToBuy.add(newItem);
+    }
+
+    /**
+     * Checks if an item is already in the list. If it is, it updates its quantity
+     * and take the bigest maxPrice.
+     *
+     * @return true if the item was already in the list
+     */
+    private boolean increaseQuantity(String item, long maxPrice, int quantity) {
+        for (Item i : itemsToBuy) {
+            if (i.getClass().getSimpleName().equals(item)) {
+                i.setQuantity(i.getQuantity() + quantity);
+                if (i.getMaxPrice() < maxPrice) {
+                    i.setMaxPrice(maxPrice);
+                }
+                refresh();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("CollectionAddedToSelf")
+    private void refresh() {
+        List<Item> l = new ArrayList<>(itemsToBuy);
+        itemsToBuy.removeAll(itemsToBuy);
+        itemsToBuy.addAll(l);
     }
 }
