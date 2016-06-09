@@ -1,4 +1,4 @@
-package com.davidflex.supermarket.agents.behaviours;
+package com.davidflex.supermarket.agents.behaviours.personal_agent;
 
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
@@ -159,7 +159,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
                     itUser.setPrice(itShop.getPrice());
                     if(itShop.getPrice() > itUser.getMaxPrice()) {
                         // If more expensive -> don't buy
-                        itUser.setStatus("Max. price violation");
+                        itUser.setStatus("Max. price violation.");
                         ((PersonalAgent) getAgent()).printStatus(
                                 "The price of " + itUser.getClass().getSimpleName() + " violates max. price restriction ("
                                         + itShop.getPrice() + ">" + itUser.getMaxPrice() + ").");

@@ -1,4 +1,4 @@
-package com.davidflex.supermarket.agents.behaviours;
+package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
 import com.davidflex.supermarket.ontologies.company.elements.AssignOrder;

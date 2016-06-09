@@ -1,6 +1,6 @@
 package com.davidflex.supermarket.agents.shop;
 
-import com.davidflex.supermarket.agents.behaviours.ListenNewOrdersBehaviour;
+import com.davidflex.supermarket.agents.behaviours.shop_agent.ListenNewOrdersBehaviour;
 import com.davidflex.supermarket.agents.utils.DFUtils;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;

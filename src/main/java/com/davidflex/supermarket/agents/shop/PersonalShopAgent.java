@@ -1,6 +1,6 @@
 package com.davidflex.supermarket.agents.shop;
 
-import com.davidflex.supermarket.agents.behaviours.GetCustomerInfoBehaviour;
+import com.davidflex.supermarket.agents.behaviours.personal_shop_agent.GetCustomerInfoBehaviour;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import com.davidflex.supermarket.ontologies.company.elements.Order;
 import com.davidflex.supermarket.ontologies.shop.ShopOntology;

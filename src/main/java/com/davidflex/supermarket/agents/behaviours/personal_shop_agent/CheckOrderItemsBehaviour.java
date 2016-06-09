@@ -1,4 +1,4 @@
-package com.davidflex.supermarket.agents.behaviours;
+package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
@@ -33,6 +33,8 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
             i.setPrice(1); // Just for testing!!!
         }
         ((PersonalShopAgent) getAgent()).getOrder().getItems().get(0).setPrice(50);
+        ((PersonalShopAgent) getAgent()).getOrder().getItems().remove(1);
+
         // Send list to customer
         logger.info("Sending available items to customer...");
         sendList(((PersonalShopAgent) getAgent()).getOrder().getBuyer());

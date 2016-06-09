@@ -1,4 +1,4 @@
-package com.davidflex.supermarket.agents.behaviours;
+package com.davidflex.supermarket.agents.behaviours.personal_agent;
 
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
 import com.davidflex.supermarket.agents.utils.DFUtils;

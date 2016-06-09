@@ -1,6 +1,6 @@
 package com.davidflex.supermarket.agents.customer;
 
-import com.davidflex.supermarket.agents.behaviours.ContactBehaviour;
+import com.davidflex.supermarket.agents.behaviours.personal_agent.ContactBehaviour;
 import com.davidflex.supermarket.gui.CustomerGuiActionsAdapter;
 import com.davidflex.supermarket.gui.PersonalAgentGuiActionsAdapter;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;

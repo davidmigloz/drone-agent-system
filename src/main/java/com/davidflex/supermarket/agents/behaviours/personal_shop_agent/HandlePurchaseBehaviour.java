@@ -1,4 +1,4 @@
-package com.davidflex.supermarket.agents.behaviours;
+package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
 import jade.content.lang.Codec;
@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Gets the purchase order with the list of items to purchase and contact with the proper warehouses
  * to deliver the items.
+ *  Used by PersonalShopAgent.
  */
 public class HandlePurchaseBehaviour extends OneShotBehaviour{
 
