@@ -8,6 +8,7 @@ import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
+import jade.core.AID;
 import jade.core.Agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,8 @@ public class PersonalShopAgent extends Agent {
     private Codec codec;
     private Ontology shopOntology;
     private Ontology companyOntology;
+
+    private AID shopAgent;
     private Order order;
 
     public PersonalShopAgent() {
@@ -52,6 +55,14 @@ public class PersonalShopAgent extends Agent {
 
     public Ontology getCompanyOntology() {
         return companyOntology;
+    }
+
+    public AID getShopAgent() {
+        return shopAgent;
+    }
+
+    public void setShopAgent(AID shopAgent) {
+        this.shopAgent = shopAgent;
     }
 
     public Order getOrder() {
