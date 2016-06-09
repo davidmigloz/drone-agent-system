@@ -1,9 +1,11 @@
 package com.davidflex.supermarket.agents.shop;
 
+import com.davidflex.supermarket.agents.behaviours.shop_agent.ListenEmployeesBehaviour;
 import com.davidflex.supermarket.agents.behaviours.shop_agent.ListenNewOrdersBehaviour;
 import com.davidflex.supermarket.agents.utils.DFUtils;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
+import com.davidflex.supermarket.ontologies.company.elements.Warehouse;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
 import com.davidflex.supermarket.ontologies.shop.ShopOntology;
@@ -17,7 +19,9 @@ import jade.wrapper.ContainerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -29,8 +33,11 @@ public class ShopAgent extends Agent {
     private Ontology shopOntology;
     private Ontology companyOntology;
     private ContainerController container;
+
+    private List<Warehouse> warehouses;
     private AtomicLong orderIDs;
     private Map<Long, Location> activeOrders;
+
 
     public ShopAgent() {
         codec = new SLCodec(0); // fipa-sl0
@@ -42,6 +49,7 @@ public class ShopAgent extends Agent {
             doDelete();
         }
         container = JadeUtils.createContainer("personalShopAgents");
+        warehouses = new ArrayList<>();
         orderIDs = new AtomicLong();
         activeOrders = new HashMap<>();
     }
@@ -62,6 +70,7 @@ public class ShopAgent extends Agent {
         }
         // Add behaviours
         addBehaviour(new ListenNewOrdersBehaviour(this));
+        addBehaviour(new ListenEmployeesBehaviour(this));
     }
 
     @Override
@@ -83,6 +92,14 @@ public class ShopAgent extends Agent {
         long num = orderIDs.incrementAndGet();
         activeOrders.put(num, location);
         return num;
+    }
+
+    public void registerWarehouse(Warehouse warehouse) {
+        warehouses.add(warehouse);
+    }
+
+    public List<Warehouse> getWarehouses() {
+        return warehouses;
     }
 
     public Codec getCodec() {

@@ -49,8 +49,6 @@ public class HandlePurchaseBehaviour extends OneShotBehaviour{
             getAgent().getContentManager().fillContent(msg, d);
             // Send message
             getAgent().send(msg);
-            // Handle purchase
-            getAgent().addBehaviour(new HandlePurchaseBehaviour(getAgent()));
         } catch (Codec.CodecException | OntologyException e) {
             logger.error("Error filling msg.", e);
         }

@@ -76,7 +76,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
 
         // Get reply
         try {
-            logger.info("Waiting answer from ");
+            logger.info("Waiting answer from " + personalShopAgent.getLocalName());
             ACLMessage msg = getAgent().blockingReceive(mt);
             if (msg != null) {
                 ContentElement ce = getAgent().getContentManager().extractContent(msg);

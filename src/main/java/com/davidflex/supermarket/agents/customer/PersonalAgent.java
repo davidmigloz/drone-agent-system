@@ -51,7 +51,7 @@ public class PersonalAgent extends Agent {
         getContentManager().registerOntology(ontology);
         getContentManager().registerOntology(ontology);
         getContentManager().registerOntology(ontology);
-        // Get arguments (order number)
+        // Get arguments (order number, coordX, coordY)
         Object[] args = getArguments();
         if (args != null && args.length == 3) {
             orderNumber = Integer.parseInt((String) args[0]);
