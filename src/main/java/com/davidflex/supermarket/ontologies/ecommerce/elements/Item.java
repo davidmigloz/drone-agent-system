@@ -6,12 +6,14 @@ import jade.content.Concept;
  * Item from the transaction.
  */
 public abstract class Item implements Concept, Cloneable {
-	private static final long serialVersionUID = 1L;
 
 	private int quantity;
 	private float price;
 	private float maxPrice;
 	private String status;
+
+	public Item() {
+	}
 
 	public Item(int quantity, float price) {
 		setQuantity(quantity);

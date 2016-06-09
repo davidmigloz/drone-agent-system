@@ -1,9 +1,11 @@
-package com.davidflex.supermarket.ontologies.paella.elements;
+package com.davidflex.supermarket.ontologies.shop.paella;
 
-import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 
 public class GreenBean extends PaellaItem {
-	private static final long serialVersionUID = 1L;
+
+	public GreenBean() {
+	}
 
 	public GreenBean(int quantity, float price) {
 		super(quantity, price);
@@ -15,6 +17,6 @@ public class GreenBean extends PaellaItem {
 
 	@Override
 	public String toString() {
-		return PaellaOntologyVocabulary.GREENBEA;
+		return ShopOntologyVocabulary.GREENBEA;
 	}
 }

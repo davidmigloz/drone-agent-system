@@ -1,10 +1,13 @@
-package com.davidflex.supermarket.ontologies.wine.elements;
+package com.davidflex.supermarket.ontologies.shop.wine;
 
-import com.davidflex.supermarket.ontologies.wine.WineOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 
+@SuppressWarnings("unused")
 public class Galia extends WineItem {
-	private static final long serialVersionUID = 1L;
-	
+
+	public Galia() {
+	}
+
 	public Galia(int quantity, float price) {
 		super(quantity, price);
 	}
@@ -15,6 +18,6 @@ public class Galia extends WineItem {
 
 	@Override
 	public String toString() {
-		return WineOntologyVocabulary.GALIA;
+		return ShopOntologyVocabulary.GALIA;
 	}
 }

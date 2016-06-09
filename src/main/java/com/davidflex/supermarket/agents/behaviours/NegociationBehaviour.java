@@ -152,7 +152,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
             // Check if it is in the receive list
             for (int j = 0; j < receivedList.size(); j++) {
                 Item itShop = receivedList.get(j);
-                if(itUser.getClass().getName().equals(itShop.getClass().getName())) {
+                if(itUser.getClass().getSimpleName().equals(itShop.getClass().getSimpleName())) {
                     receivedList.remove(j);
                     checked = true;
                     // Check price
@@ -161,7 +161,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
                         // If more expensive -> don't buy
                         itUser.setStatus("Max. price violation");
                         ((PersonalAgent) getAgent()).printStatus(
-                                "The price of " + itUser.getClass().getName() + " violates max. price restriction ("
+                                "The price of " + itUser.getClass().getSimpleName() + " violates max. price restriction ("
                                         + itShop.getPrice() + ">" + itUser.getMaxPrice() + ").");
                     } else {
                         // If price ok -> buy it
@@ -174,7 +174,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
             if(!checked) {
                 itUser.setStatus("Not available.");
                 ((PersonalAgent) getAgent()).printStatus(
-                        "The product " + itUser.getClass().getName() + " is not available.");
+                        "The product " + itUser.getClass().getSimpleName() + " is not available.");
             }
         }
         return result;

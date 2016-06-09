@@ -31,12 +31,11 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
 
     public ListenNewOrdersBehaviour(Agent a) {
         super(a);
-        mtOnto = MessageTemplate.MatchOntology(((ShopAgent) getAgent()).getECommerceOntology().getName());
+        mtOnto = MessageTemplate.MatchOntology(((ShopAgent) getAgent()).getShopOntology().getName());
     }
 
     @Override
     public void action() {
-        logger.info("Start");
         ACLMessage msg = getAgent().receive(mtOnto);
         if (msg != null) {
             try {
@@ -79,7 +78,6 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
         } else {
             block();
         }
-        logger.info("Finish");
     }
 
     /**
@@ -91,7 +89,7 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
             msg.setSender(getAgent().getAID());
             msg.addReceiver(personalShopAgent);
             msg.setLanguage(((ShopAgent) getAgent()).getCodec().getName());
-            msg.setOntology(((ShopAgent) getAgent()).getCompanyOntolagy().getName());
+            msg.setOntology(((ShopAgent) getAgent()).getCompanyOntology().getName());
             // Fill the content
             Order order = new Order(orderID, customer, location);
             AssignOrder request = new AssignOrder(order);
@@ -112,7 +110,7 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
             msg.setSender(getAgent().getAID());
             msg.addReceiver(customer);
             msg.setLanguage(((ShopAgent) getAgent()).getCodec().getName());
-            msg.setOntology(((ShopAgent) getAgent()).getECommerceOntology().getName());
+            msg.setOntology(((ShopAgent) getAgent()).getShopOntology().getName());
             // Fill the content
             ContactResponse response = new ContactResponse(personalShopAgent);
             getAgent().getContentManager().fillContent(msg, response);

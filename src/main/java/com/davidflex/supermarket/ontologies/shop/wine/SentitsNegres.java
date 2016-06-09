@@ -1,10 +1,13 @@
-package com.davidflex.supermarket.ontologies.wine.elements;
+package com.davidflex.supermarket.ontologies.shop.wine;
 
-import com.davidflex.supermarket.ontologies.wine.WineOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 
+@SuppressWarnings("unused")
 public class SentitsNegres extends WineItem {
-	private static final long serialVersionUID = 1L;
-	
+
+	public SentitsNegres() {
+	}
+
 	public SentitsNegres(int quantity, float price) {
 		super(quantity, price);
 	}
@@ -15,6 +18,6 @@ public class SentitsNegres extends WineItem {
 
 	@Override
 	public String toString() {
-		return WineOntologyVocabulary.SENTITS;
+		return ShopOntologyVocabulary.SENTITS;
 	}
 }

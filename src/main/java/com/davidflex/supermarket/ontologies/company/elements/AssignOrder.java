@@ -6,7 +6,7 @@ import jade.content.Predicate;
  * Assign order to personalShopAgent.
  * Used by ShopAgent.
  */
-public class AssignOrder implements Predicate{
+public class AssignOrder implements Predicate {
     private Order order;
 
     public AssignOrder() {

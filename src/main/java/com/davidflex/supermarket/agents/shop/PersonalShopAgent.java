@@ -1,9 +1,9 @@
 package com.davidflex.supermarket.agents.shop;
 
-import com.davidflex.supermarket.agents.behaviours.GetOrderInfoBehaviour;
+import com.davidflex.supermarket.agents.behaviours.GetCustomerInfoBehaviour;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import com.davidflex.supermarket.ontologies.company.elements.Order;
-import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntology;
+import com.davidflex.supermarket.ontologies.shop.ShopOntology;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
@@ -17,15 +17,15 @@ public class PersonalShopAgent extends Agent {
     private static final Logger logger = LoggerFactory.getLogger(PersonalShopAgent.class);
 
     private Codec codec;
-    private Ontology companyOntolagy;
-    private Ontology eCommerceOntology;
+    private Ontology shopOntology;
+    private Ontology companyOntology;
     private Order order;
 
     public PersonalShopAgent() {
         codec = new SLCodec(0); // fipa-sl0
         try {
-            companyOntolagy = CompanyOntolagy.getInstance();
-            eCommerceOntology = ECommerceOntology.getInstance();
+            shopOntology = ShopOntology.getInstance();
+            companyOntology = CompanyOntolagy.getInstance();
         } catch (BeanOntologyException e) {
             logger.error("Ontology error!", e);
             doDelete();
@@ -36,22 +36,22 @@ public class PersonalShopAgent extends Agent {
     protected void setup() {
         // Setup content manager
         getContentManager().registerLanguage(codec);
-        getContentManager().registerOntology(eCommerceOntology);
-        getContentManager().registerOntology(companyOntolagy);
+        getContentManager().registerOntology(shopOntology);
+        getContentManager().registerOntology(companyOntology);
         // Add behaviours
-        addBehaviour(new GetOrderInfoBehaviour(this));
+        addBehaviour(new GetCustomerInfoBehaviour(this));
     }
 
     public Codec getCodec() {
         return codec;
     }
 
-    public Ontology getCompanyOntolagy() {
-        return companyOntolagy;
+    public Ontology getShopOntology() {
+        return shopOntology;
     }
 
-    public Ontology getECommerceOntology() {
-        return eCommerceOntology;
+    public Ontology getCompanyOntology() {
+        return companyOntology;
     }
 
     public Order getOrder() {

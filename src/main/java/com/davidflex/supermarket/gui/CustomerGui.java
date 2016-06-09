@@ -1,10 +1,9 @@
 package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
-import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
-import com.davidflex.supermarket.ontologies.paella.elements.*;
-import com.davidflex.supermarket.ontologies.wine.WineOntologyVocabulary;
-import com.davidflex.supermarket.ontologies.wine.elements.*;
+import com.davidflex.supermarket.ontologies.shop.paella.*;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.shop.wine.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +19,7 @@ import java.io.IOException;
 /**
  * Main application.
  */
-public class CustomerGui extends Application implements PaellaOntologyVocabulary, WineOntologyVocabulary{
+public class CustomerGui extends Application implements ShopOntologyVocabulary {
 
     private final ObservableList<String> categories = FXCollections.observableArrayList(PAELLA, WINE);
 

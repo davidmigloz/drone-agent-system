@@ -3,9 +3,9 @@ package com.davidflex.supermarket.agents.customer;
 import com.davidflex.supermarket.agents.behaviours.ContactBehaviour;
 import com.davidflex.supermarket.gui.CustomerGuiActionsAdapter;
 import com.davidflex.supermarket.gui.PersonalAgentGuiActionsAdapter;
-import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntology;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
+import com.davidflex.supermarket.ontologies.shop.ShopOntology;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
@@ -36,7 +36,7 @@ public class PersonalAgent extends Agent {
     public PersonalAgent() {
         codec = new SLCodec(0); // fipa-sl0
         try {
-            ontology = ECommerceOntology.getInstance();
+            ontology = ShopOntology.getInstance();
         } catch (BeanOntologyException e) {
             logger.error("Ontology error!", e);
             doDelete();
@@ -48,6 +48,8 @@ public class PersonalAgent extends Agent {
     protected void setup() {
         // Setup content manager
         getContentManager().registerLanguage(codec);
+        getContentManager().registerOntology(ontology);
+        getContentManager().registerOntology(ontology);
         getContentManager().registerOntology(ontology);
         // Get arguments (order number)
         Object[] args = getArguments();
@@ -94,7 +96,7 @@ public class PersonalAgent extends Agent {
      */
     public List<Item> getListItems() {
         List<Item> list = new ArrayList<>(items.size());
-        for(Item i : list) {
+        for(Item i : items) {
             Item newItem = i.clone();
             newItem.setMaxPrice(0);
             newItem.setStatus("");

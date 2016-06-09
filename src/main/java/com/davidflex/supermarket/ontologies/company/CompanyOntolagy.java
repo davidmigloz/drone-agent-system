@@ -9,7 +9,6 @@ import jade.content.onto.Ontology;
  * Used in internal comunication between shopAgent, personalShopAgents, warehouses and drones.
  */
 public class CompanyOntolagy extends BeanOntology implements CompanyOntolagyVocabulary {
-    private static final long serialVersionUID = 1L;
 
     // The singleton instance of this ontology
     private static Ontology instance;

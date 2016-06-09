@@ -1,10 +1,12 @@
-package com.davidflex.supermarket.ontologies.paella.elements;
+package com.davidflex.supermarket.ontologies.shop.paella;
 
-import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 
 public class Chicken extends PaellaItem {
-	private static final long serialVersionUID = 1L;
-	
+
+	public Chicken() {
+	}
+
 	public Chicken(int quantity, float price) {
 		super(quantity, price);
 	}
@@ -15,6 +17,6 @@ public class Chicken extends PaellaItem {
 
 	@Override
 	public String toString() {
-		return PaellaOntologyVocabulary.CHICKEN;
+		return ShopOntologyVocabulary.CHICKEN;
 	}
 }

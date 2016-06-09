@@ -1,10 +1,13 @@
-package com.davidflex.supermarket.ontologies.paella.elements;
+package com.davidflex.supermarket.ontologies.shop.paella;
 
-import com.davidflex.supermarket.ontologies.paella.PaellaOntologyVocabulary;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 
+@SuppressWarnings("unused")
 public class Salt extends PaellaItem {
-	private static final long serialVersionUID = 1L;
-	
+
+	public Salt() {
+	}
+
 	public Salt(int quantity, float price) {
 		super(quantity, price);
 	}
@@ -15,6 +18,6 @@ public class Salt extends PaellaItem {
 
 	@Override
 	public String toString() {
-		return PaellaOntologyVocabulary.SALT;
+		return ShopOntologyVocabulary.SALT;
 	}
 }

@@ -1,9 +1,12 @@
-package com.davidflex.supermarket.ontologies.paella.elements;
+package com.davidflex.supermarket.ontologies.shop.paella;
 
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 
 public class PaellaItem extends Item {
-    private static final String CATEGORY = "Paella";
+
+    public PaellaItem() {
+    }
 
     public PaellaItem(int quantity, float price) {
         super(quantity, price);
@@ -14,6 +17,6 @@ public class PaellaItem extends Item {
     }
 
     public String getCategory() {
-        return CATEGORY;
+        return ShopOntologyVocabulary.PAELLA_CATEGORY;
     }
 }

@@ -1,7 +1,7 @@
 package com.davidflex.supermarket.agents.behaviours;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
-import com.davidflex.supermarket.ontologies.company.elements.AssignOrder;
+import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRequest;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
@@ -13,18 +13,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Get order info send by shopAgent.
- * Used by personalShopAgent.
+ * Get the list of items that the user wants to buy.
+ * Used by PersonalShopAgent.
  */
-public class GetOrderInfoBehaviour extends OneShotBehaviour {
+public class GetOrderBehaviour extends OneShotBehaviour {
 
-    private static final Logger logger = LoggerFactory.getLogger(GetOrderInfoBehaviour.class);
+    private static final Logger logger = LoggerFactory.getLogger(GetOrderBehaviour.class);
 
     private MessageTemplate mt;
 
-    public GetOrderInfoBehaviour(Agent a) {
+    public GetOrderBehaviour(Agent a) {
         super(a);
-        mt = MessageTemplate.MatchOntology(((PersonalShopAgent) getAgent()).getCompanyOntolagy().getName());
+        mt = MessageTemplate.MatchSender(((PersonalShopAgent) getAgent()).getOrder().getBuyer());
     }
 
     @Override
@@ -33,15 +33,14 @@ public class GetOrderInfoBehaviour extends OneShotBehaviour {
         if (msg != null) {
             try {
                 ContentElement ce = getAgent().getContentManager().extractContent(msg);
-                if (ce instanceof AssignOrder) {
-                    logger.info("Order info received!");
+                if (ce instanceof PurchaseRequest) {
+                    logger.info("Item list received!");
                     // Get content
-                    AssignOrder ao = (AssignOrder) ce;
-                    // Save order
-                    ((PersonalShopAgent) getAgent()).setOrder(ao.getOrder());
-                    // Send confirmation
-                    msg = msg.createReply();
-                    getAgent().send(msg);
+                    PurchaseRequest pr = (PurchaseRequest) ce;
+                    // Save list
+                    ((PersonalShopAgent) getAgent()).getOrder().setItems(pr.getItem());
+                    // Check items
+                    getAgent().addBehaviour(new CheckOrderItemsBehaviour(getAgent()));
                 }
             } catch (Codec.CodecException | OntologyException e) {
                 logger.error("Error at extracting message", e);
