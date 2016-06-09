@@ -48,6 +48,7 @@ public class PersonalAgent extends Agent {
     protected void setup() {
         // Setup content manager
         getContentManager().registerLanguage(codec);
+        getContentManager().registerOntology(ontology);
         // Get arguments (order number, coordX, coordY)
         Object[] args = getArguments();
         if (args != null && args.length == 3) {

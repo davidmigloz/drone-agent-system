@@ -37,7 +37,8 @@ public class GetCustomerInfoBehaviour extends OneShotBehaviour {
                     logger.info("Order info received!");
                     // Get content
                     AssignOrder ao = (AssignOrder) ce;
-                    // Save order
+                    // Save order and shopAgent
+                    ((PersonalShopAgent) getAgent()).setShopAgent(msg.getSender());
                     ((PersonalShopAgent) getAgent()).setOrder(ao.getOrder());
                     // Send confirmation
                     msg = msg.createReply();

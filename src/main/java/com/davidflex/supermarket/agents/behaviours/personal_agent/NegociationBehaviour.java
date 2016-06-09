@@ -83,7 +83,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
                 if (ce instanceof Done) {
                     // Order is done
                     logger.info("Order done.");
-                    ((PersonalAgent) getAgent()).printStatus("Order done!");
+                    ((PersonalAgent) getAgent()).printStatus("Order registered!");
                     ((PersonalAgent) getAgent()).printStatus("Order is being prepared for shipping.");
                     // Prepare for receive order
                     // TODO
