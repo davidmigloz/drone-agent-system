@@ -18,14 +18,16 @@ public class WarehousesComparator implements Comparator<Warehouse> {
 
     @Override
     public int compare(Warehouse w1, Warehouse w2) {
-        double d1 = squaredEuclidianDistance(customer.getX(), customer.getX(), w1.getX(), w1.getY());
-        double d2 = squaredEuclidianDistance(customer.getX(), customer.getX(), w2.getX(), w2.getY());
+        double d1 = squaredEuclidianDistance(customer.getX(), customer.getY(), w1.getX(), w1.getY());
+        double d2 = squaredEuclidianDistance(customer.getX(), customer.getY(), w2.getX(), w2.getY());
         return (int) (d1 - d2);
     }
 
     /**
      * Calculate the Squared Euclidean Distance from the point to another point.
      * It place progressively greater weight on objects that are farther apart.
+     *
+     * @return the square euclidean distance.
      */
     private double squaredEuclidianDistance(int x1, int x2, int y1, int y2) {
         double d = 0D;
