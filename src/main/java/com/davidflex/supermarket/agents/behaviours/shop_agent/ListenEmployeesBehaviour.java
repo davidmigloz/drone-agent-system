@@ -3,6 +3,7 @@ package com.davidflex.supermarket.agents.behaviours.shop_agent;
 import com.davidflex.supermarket.agents.shop.ShopAgent;
 import com.davidflex.supermarket.ontologies.company.elements.GetListWarehousesRequest;
 import com.davidflex.supermarket.ontologies.company.elements.GetListWarehousesResponse;
+import com.davidflex.supermarket.ontologies.company.elements.InformPosition;
 import com.davidflex.supermarket.ontologies.company.elements.RegisterWarehouse;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
@@ -51,6 +52,11 @@ public class ListenEmployeesBehaviour extends CyclicBehaviour {
                     // Send list of warehouses
                     logger.info("Sending list of warehouses to " + msg.getSender().getLocalName());
                     sendListWarehouses(msg.getSender());
+                } else if (ce instanceof InformPosition) {
+                    // Register position of drone
+                    InformPosition ip = (InformPosition) ce;
+                    logger.info("Drone " + msg.getSender().getLocalName() + "is " + ip.toString());
+                    ((ShopAgent) getAgent()).setDronePosition(ip.getDrone(), ip.getPosition());
                 } else {
                     logger.error("Wrong message received.");
                 }
