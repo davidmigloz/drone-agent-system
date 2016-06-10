@@ -10,16 +10,14 @@ import jade.core.AID;
 public class Warehouse implements Concept {
 
     private AID warehouseAgent;
-    private int x;
-    private int y;
+    private Position location;
 
     public Warehouse() {
     }
 
-    public Warehouse(AID warehouseAgent, int x, int y) {
+    public Warehouse(AID warehouseAgent, Position location) {
         this.warehouseAgent = warehouseAgent;
-        this.x = x;
-        this.y = y;
+        this.location = location;
     }
 
     public AID getWarehouseAgent() {
@@ -30,19 +28,11 @@ public class Warehouse implements Concept {
         this.warehouseAgent = warehouseAgent;
     }
 
-    public int getX() {
-        return x;
+    public Position getLocation() {
+        return location;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    public void setLocation(Position location) {
+        this.location = location;
     }
 }

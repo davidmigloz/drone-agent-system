@@ -2,6 +2,7 @@ package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.agents.behaviours.shop_agent.ListenEmployeesBehaviour;
 import com.davidflex.supermarket.agents.behaviours.shop_agent.ListenNewOrdersBehaviour;
+import com.davidflex.supermarket.agents.behaviours.shop_agent.ShowDataBehaviour;
 import com.davidflex.supermarket.agents.utils.DFUtils;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
@@ -18,6 +19,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPAException;
 import jade.wrapper.ContainerController;
+import jade.wrapper.StaleProxyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +57,7 @@ public class ShopAgent extends Agent {
         warehouses = new ArrayList<>();
         orderIDs = new AtomicLong();
         activeOrders = new HashMap<>();
+        drones = new HashMap<>();
     }
 
     @Override
@@ -71,9 +74,19 @@ public class ShopAgent extends Agent {
             logger.error("Error at registering in DF", e);
             doDelete();
         }
+
+        // Launch GUI
+        try {
+            getContainerController().createNewAgent("ShopAgentGUI",
+                    ShopAgentGuiAgent.class.getName(), new Object[]{});
+        } catch (StaleProxyException e) {
+            logger.error("Error launching GUI", e);
+        }
+
         // Add behaviours
         addBehaviour(new ListenNewOrdersBehaviour(this));
         addBehaviour(new ListenEmployeesBehaviour(this));
+        addBehaviour(new ShowDataBehaviour(this, 2000));
     }
 
     @Override
@@ -123,5 +136,13 @@ public class ShopAgent extends Agent {
 
     public void setDronePosition(AID drone, Position position){
         drones.put(drone, position);
+    }
+
+    public Map<AID, Position> getDrones() {
+        return drones;
+    }
+
+    public Map<Long, Location> getActiveOrders() {
+        return activeOrders;
     }
 }

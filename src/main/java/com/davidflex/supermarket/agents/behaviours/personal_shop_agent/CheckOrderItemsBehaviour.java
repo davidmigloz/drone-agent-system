@@ -46,9 +46,6 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         // Request list of warehouses and sort them
         List<Warehouse> warehouses = getWarehouses();
         warehouses.sort(new WarehousesComparator(((PersonalShopAgent) getAgent()).getOrder().getLocation()));
-        for(Warehouse w : warehouses) {
-            logger.debug("Warehouse: " + w.getX() + "/" + w.getY());
-        }
 
         // Send list to customer
         logger.info("Sending available items to customer...");

@@ -1,6 +1,7 @@
 package com.davidflex.supermarket.agents.behaviours.warehouse_agent;
 
 import com.davidflex.supermarket.agents.shop.WarehouseAgent;
+import com.davidflex.supermarket.ontologies.company.elements.Position;
 import com.davidflex.supermarket.ontologies.company.elements.RegisterWarehouse;
 import com.davidflex.supermarket.ontologies.company.elements.Warehouse;
 import jade.content.ContentElement;
@@ -44,7 +45,7 @@ public class RegisterBehaviour extends OneShotBehaviour {
             msg.setOntology(((WarehouseAgent) getAgent()).getOntology().getName());
             // Fill the content
             Warehouse w = new Warehouse(getAgent().getAID(),
-                    ((WarehouseAgent) getAgent()).getX(), ((WarehouseAgent) getAgent()).getY());
+                    new Position(((WarehouseAgent) getAgent()).getX(), ((WarehouseAgent) getAgent()).getY()));
             RegisterWarehouse request = new RegisterWarehouse(w);
             Action a = new Action(getAgent().getAID(), request);
             getAgent().getContentManager().fillContent(msg, a);

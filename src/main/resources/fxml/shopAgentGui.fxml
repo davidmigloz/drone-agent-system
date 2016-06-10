@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.davidflex.supermarket.gui.ShopAgentGuiController">
+   <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <padding>
+         <Insets bottom="10.0" />
+      </padding>
+      <Canvas fx:id="canvas" height="500.0" width="500.0">
+         <VBox.margin>
+            <Insets bottom="15.0" />
+         </VBox.margin>
+      </Canvas>
+      <GridPane>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <GridPane>
+            <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="10.0" prefWidth="73.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="94.0" />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="74.0" text="Warehouses:" />
+            <TextField fx:id="warehouses" alignment="CENTER" editable="false" focusTraversable="false" promptText="0" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
+            </TextField>
+         </GridPane>
+         <GridPane GridPane.columnIndex="1">
+            <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="10.0" prefWidth="73.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="94.0" />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="73.0" text="Drones:" />
+            <TextField fx:id="drones" alignment="CENTER" editable="false" focusTraversable="false" promptText="0" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
+            </TextField>
+         </GridPane>
+         <GridPane layoutX="177.0" layoutY="10.0" GridPane.columnIndex="2">
+            <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="10.0" prefWidth="73.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="94.0" />
+            </columnConstraints>
+            <rowConstraints>
+               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="71.0" text="Customer:" />
+            <TextField fx:id="customers" alignment="CENTER" editable="false" focusTraversable="false" promptText="0" GridPane.columnIndex="1">
+               <GridPane.margin>
+                  <Insets left="5.0" />
+               </GridPane.margin>
+            </TextField>
+         </GridPane>
+      </GridPane>
+   </VBox>
+</AnchorPane>
