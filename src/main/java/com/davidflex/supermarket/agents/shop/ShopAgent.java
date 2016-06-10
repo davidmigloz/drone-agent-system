@@ -5,6 +5,7 @@ import com.davidflex.supermarket.agents.behaviours.shop_agent.ListenNewOrdersBeh
 import com.davidflex.supermarket.agents.utils.DFUtils;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
+import com.davidflex.supermarket.ontologies.company.elements.Position;
 import com.davidflex.supermarket.ontologies.company.elements.Warehouse;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
@@ -13,6 +14,7 @@ import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPAException;
 import jade.wrapper.ContainerController;
@@ -37,6 +39,7 @@ public class ShopAgent extends Agent {
     private List<Warehouse> warehouses;
     private AtomicLong orderIDs;
     private Map<Long, Location> activeOrders;
+    private Map<AID, Position> drones;
 
 
     public ShopAgent() {
@@ -116,5 +119,9 @@ public class ShopAgent extends Agent {
 
     public ContainerController getContainer() {
         return container;
+    }
+
+    public void setDronePosition(AID drone, Position position){
+        drones.put(drone, position);
     }
 }
