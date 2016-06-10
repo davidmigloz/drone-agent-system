@@ -15,7 +15,7 @@
       <padding>
          <Insets bottom="10.0" />
       </padding>
-      <Canvas fx:id="canvas" height="500.0" width="500.0">
+      <Canvas fx:id="canvas" height="600.0" width="1070.0">
          <VBox.margin>
             <Insets bottom="15.0" />
          </VBox.margin>
@@ -29,7 +29,7 @@
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
-         <GridPane>
+         <GridPane alignment="CENTER_LEFT">
             <columnConstraints>
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="10.0" prefWidth="73.0" />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="94.0" />
@@ -44,7 +44,7 @@
                </GridPane.margin>
             </TextField>
          </GridPane>
-         <GridPane GridPane.columnIndex="1">
+         <GridPane alignment="CENTER" GridPane.columnIndex="1">
             <columnConstraints>
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="10.0" prefWidth="73.0" />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="94.0" />
@@ -59,7 +59,7 @@
                </GridPane.margin>
             </TextField>
          </GridPane>
-         <GridPane layoutX="177.0" layoutY="10.0" GridPane.columnIndex="2">
+         <GridPane alignment="CENTER_RIGHT" layoutX="177.0" layoutY="10.0" GridPane.columnIndex="2">
             <columnConstraints>
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="87.0" minWidth="10.0" prefWidth="73.0" />
                <ColumnConstraints hgrow="SOMETIMES" maxWidth="95.0" minWidth="10.0" prefWidth="94.0" />
@@ -67,7 +67,7 @@
             <rowConstraints>
                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
             </rowConstraints>
-            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="71.0" text="Customer:" />
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="71.0" text="Customers:" />
             <TextField fx:id="customers" alignment="CENTER" editable="false" focusTraversable="false" promptText="0" GridPane.columnIndex="1">
                <GridPane.margin>
                   <Insets left="5.0" />

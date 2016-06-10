@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +33,7 @@ public class ShopAgentGuiController implements ShopAgentGuiActions {
     @FXML
     private TextField customers;
 
+    private Image bg;
     private Image warehouseImg;
     private Image droneImg;
     private Image customerImg;
@@ -40,6 +42,7 @@ public class ShopAgentGuiController implements ShopAgentGuiActions {
         // Adapter for ShopAgent to interact with GUI
         ShopAgentGuiActionsAdapter.setInstance(this);
         // Get images
+        bg = new Image(getClass().getResourceAsStream("/img/bg.png"));
         warehouseImg = new Image(getClass().getResourceAsStream("/img/warehouse.png"));
         droneImg = new Image(getClass().getResourceAsStream("/img/drone.png"));
         customerImg = new Image(getClass().getResourceAsStream("/img/customer.png"));
@@ -80,7 +83,7 @@ public class ShopAgentGuiController implements ShopAgentGuiActions {
     }
 
     private void clearCanvas() {
-        canvas.getGraphicsContext2D().setFill(Color.rgb(75, 175, 80));
+        canvas.getGraphicsContext2D().setFill(new ImagePattern(bg));
         canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 

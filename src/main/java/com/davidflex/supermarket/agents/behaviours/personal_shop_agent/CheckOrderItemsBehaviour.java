@@ -57,7 +57,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         warehouses.sort(new WarehousesComparator(((PersonalShopAgent) getAgent()).getOrder().getLocation()));
         logger.info("List of warehouses received (And sorted):");
         for(Warehouse w : warehouses) {
-            logger.debug("Warehouse: " + w.getX() + "/" + w.getY());
+            logger.debug("Warehouse: " + w.getLocation().getX() + "/" + w.getLocation().getY());
         }
 
         //Error if no warehouse available.
