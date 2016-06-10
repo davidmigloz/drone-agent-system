@@ -18,8 +18,10 @@ public class WarehousesComparator implements Comparator<Warehouse> {
 
     @Override
     public int compare(Warehouse w1, Warehouse w2) {
-        double d1 = squaredEuclidianDistance(customer.getX(), customer.getY(), w1.getX(), w1.getY());
-        double d2 = squaredEuclidianDistance(customer.getX(), customer.getY(), w2.getX(), w2.getY());
+        double d1 = squaredEuclidianDistance(customer.getX(), customer.getX(),
+                w1.getLocation().getX(), w1.getLocation().getY());
+        double d2 = squaredEuclidianDistance(customer.getX(), customer.getX(),
+                w2.getLocation().getX(), w2.getLocation().getY());
         return (int) (d1 - d2);
     }
 

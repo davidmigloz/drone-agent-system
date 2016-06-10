@@ -3,7 +3,7 @@ package com.davidflex.supermarket.ontologies.company.elements;
 import jade.content.Concept;
 
 /**
- * Position of a drone agent.
+ * Position of a drone or warehouse agent.
  */
 @SuppressWarnings("unused")
 public class Position implements Concept{
