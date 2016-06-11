@@ -6,8 +6,10 @@ import jade.content.Predicate;
 import java.util.List;
 
 /**
- * Created by moose on 2016-06-10.
  * Request the warehouse to check its available stocks.
+ *
+ * @author  Constantin MASSON
+ * @since   June 10, 2016
  */
 @SuppressWarnings("unused")
 public class CheckStockItemsRequest implements Predicate {

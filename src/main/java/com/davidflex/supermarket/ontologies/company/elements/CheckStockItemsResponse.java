@@ -5,8 +5,10 @@ import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
 import java.util.List;
 
 /**
- * Created by moose on 2016-06-10.
  * Response from warehouse with list of its available stock.
+ *
+ * @author  Constantin MASSON
+ * @since   June 10, 2016
  */
 @SuppressWarnings("unused")
 public class CheckStockItemsResponse {
