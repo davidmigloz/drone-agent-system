@@ -1,10 +1,7 @@
 package com.davidflex.supermarket.agents.behaviours.personal_agent;
 
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Purchase;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRequest;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRespond;
+import com.davidflex.supermarket.ontologies.ecommerce.elements.*;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
@@ -61,7 +58,14 @@ public class NegociationBehaviour extends OneShotBehaviour {
                     PurchaseRespond pr = (PurchaseRespond) ce;
                     // Check items
                     finalItemList = checkItems(pr.getItem());
-                } else {
+                } else if(ce instanceof PurchaseError){
+                    //If error occurred.
+                    //TODO update: add cancelled status
+                    ((PersonalAgent) getAgent()).printStatus("Error occurred.");
+                    logger.error("Error occurred (PurchaseError received)");
+                    return;
+                }
+                else {
                     logger.error("Wrong message received.");
                 }
             }

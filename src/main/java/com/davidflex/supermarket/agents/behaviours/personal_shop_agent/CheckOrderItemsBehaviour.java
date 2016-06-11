@@ -58,7 +58,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
         //Error if no warehouse available.
         if(warehouses.isEmpty()){
-            logger.info("No warehouses available.. Error sending message.");
+            logger.error("No warehouses available.. Error sending message.");
             this.sendPurchaseError(buyerAID, "No warehouse available.");
             return; //Quit now
         }
@@ -256,10 +256,10 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
     /**
      * Get the list of available warehouses (Registered in shop).
      *
-     * @return List of warehouses.
+     * @return List of warehouses. (Empty if no warehouses)
      */
     private List<Warehouse> getWarehouses() throws Codec.CodecException, OntologyException {
-        List<Warehouse> list = new ArrayList<>();
+        List<Warehouse> list = null;
 
         //SEND REQUEST - Request message to the DF
         //Create message
@@ -278,14 +278,13 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         MessageTemplate mt = MessageTemplate.MatchSender(((PersonalShopAgent) getAgent()).getShopAgent());
         ACLMessage response = getAgent().blockingReceive(mt);
         //Recover message content are get list.
-        ContentElement ce = getAgent().getContentManager().extractContent(msg);
+        ContentElement ce = getAgent().getContentManager().extractContent(response);
         if (ce instanceof GetListWarehousesResponse) {
             GetListWarehousesResponse wResonse = (GetListWarehousesResponse) ce;
             list = wResonse.getWarehouses();
         } else {
             logger.error("Wrong message received.");
-            return list;
         }
-        return list;
+        return (list != null) ? list : new ArrayList<>();
     }
 }
