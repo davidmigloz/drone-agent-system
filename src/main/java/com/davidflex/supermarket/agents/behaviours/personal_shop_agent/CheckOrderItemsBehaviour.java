@@ -43,15 +43,21 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
         // Request list of warehouses and sort them by closet distance
         logger.info("Request list of warehouses available.");
-        List<Warehouse> warehouses = getWarehouses();
-        warehouses.sort(new WarehousesComparator(((PersonalShopAgent) getAgent()).getOrder().getLocation()));
-        logger.info("List of warehouses received (And sorted):");
-        for(Warehouse w : warehouses) {
-            logger.debug("Warehouse: " + w.getLocation().getX() + "/" + w.getLocation().getY());
+        List<Warehouse> warehouses = null;
+        try {
+            warehouses = getWarehouses(); //Return empty in case of no warehouses.
+            warehouses.sort(new WarehousesComparator(((PersonalShopAgent) getAgent()).getOrder().getLocation()));
+            logger.info("List of warehouses received (And sorted):");
+            for(Warehouse w : warehouses) {
+                logger.debug("Warehouse: " + w.getLocation().getX() + "/" + w.getLocation().getY());
+            }
+        } catch (Codec.CodecException | OntologyException e) {
+            logger.error("Unable to recover the list of warehouses.");
+            return;
         }
 
         //Error if no warehouse available.
-        if(warehouses == null || warehouses.isEmpty()){
+        if(warehouses.isEmpty()){
             logger.info("No warehouses available.. Error sending message.");
             this.sendPurchaseError(buyerAID, "No warehouse available.");
             return; //Quit now
@@ -252,43 +258,33 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
      *
      * @return List of warehouses.
      */
-    private List<Warehouse> getWarehouses() {
-        List<Warehouse> list = null;
-        // Send request
-        try {
-            // Prepare message
-            ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-            msg.setSender(getAgent().getAID());
-            msg.addReceiver(((PersonalShopAgent) getAgent()).getShopAgent());
-            msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
-            msg.setOntology(((PersonalShopAgent) getAgent()).getCompanyOntology().getName());
-            // Fill the content
-            GetListWarehousesRequest request = new GetListWarehousesRequest();
-            getAgent().getContentManager().fillContent(msg, request);
-            // Send message
-            getAgent().send(msg);
-        } catch (Codec.CodecException | OntologyException e) {
-            logger.error("Error filling msg.", e);
-        }
-        // Get response
-        try {
-            MessageTemplate mt = MessageTemplate.MatchSender(((PersonalShopAgent) getAgent()).getShopAgent());
-            ACLMessage msg = getAgent().blockingReceive(mt);
-            if (msg != null) {
-                ContentElement ce = getAgent().getContentManager().extractContent(msg);
-                if (ce instanceof GetListWarehousesResponse) {
-                    // Read content
-                    GetListWarehousesResponse glwr = (GetListWarehousesResponse) ce;
-                    list = glwr.getWarehouses();
+    private List<Warehouse> getWarehouses() throws Codec.CodecException, OntologyException {
+        List<Warehouse> list = new ArrayList<>();
 
-                } else {
-                    logger.error("Wrong message received.");
-                }
-            } else {
-                logger.error("Corrupted message received.");
-            }
-        } catch (Codec.CodecException | OntologyException e) {
-            logger.error("Error extracting msg.", e);
+        //SEND REQUEST - Request message to the DF
+        //Create message
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        msg.setSender(getAgent().getAID());
+        msg.addReceiver(((PersonalShopAgent) getAgent()).getShopAgent());
+        msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
+        msg.setOntology(((PersonalShopAgent) getAgent()).getCompanyOntology().getName());
+        // Fill the content and send it
+        GetListWarehousesRequest request = new GetListWarehousesRequest();
+        getAgent().getContentManager().fillContent(msg, request);
+        getAgent().send(msg);
+
+        //RECEIVE RESPONSE - Wait for answer.
+        //Wait for message using template.
+        MessageTemplate mt = MessageTemplate.MatchSender(((PersonalShopAgent) getAgent()).getShopAgent());
+        ACLMessage response = getAgent().blockingReceive(mt);
+        //Recover message content are get list.
+        ContentElement ce = getAgent().getContentManager().extractContent(msg);
+        if (ce instanceof GetListWarehousesResponse) {
+            GetListWarehousesResponse wResonse = (GetListWarehousesResponse) ce;
+            list = wResonse.getWarehouses();
+        } else {
+            logger.error("Wrong message received.");
+            return list;
         }
         return list;
     }
