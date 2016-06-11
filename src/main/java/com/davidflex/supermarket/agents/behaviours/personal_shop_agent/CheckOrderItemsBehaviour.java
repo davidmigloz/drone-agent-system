@@ -65,7 +65,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         logger.info("At least one warehouse is available.");
 
         //Send the list of items to the closest warehouse and receive warehouses load.
-        logger.info("Send request to warehouses (Starting by closest");
+        logger.info("Send request to warehouses (Starting by closest)");
         List<Item> requested = ((PersonalShopAgent)getAgent()).getOrder().getItems();
         List<List<Item>> wLoad = null;
         wLoad = this.requestToWarehouses(warehouses, requested);
@@ -134,6 +134,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
                 //skipp it. (Connection can be lost for this warehouse).
                 wLoad.add(new ArrayList<>()); //Empty list for this warehouse.
                 logger.warn("A request to warehouse {} failed and has been skipped.", w.toString());
+                logger.warn("Error message: ", ex);
             }
         }
         return wLoad;
