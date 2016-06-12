@@ -1,6 +1,7 @@
 package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.RegisterBehaviour;
+import com.davidflex.supermarket.agents.behaviours.warehouse_agent.SetupFleetBehavior;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
@@ -10,22 +11,40 @@ import jade.core.Agent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+/**
+ * WarehouseAgent.
+ * A warehouse has a stock of items and a fleet of drones.
+ *
+ * @since   9 June, 2016
+ * @author  Constantin MASSON
+ * @author  David Miguel Lozano
+ */
 public class WarehouseAgent extends Agent {
 
+    //Constants
     private static final Logger logger = LoggerFactory.getLogger(ShopAgent.class);
+    private static int FLEET_SIZE_MIN       = 2;
+    private static int FLEET_SIZE_MAX       = 42;
+    private static int FLEET_SIZE_DEFAULT   = 5;
 
-    private Codec codec;
-    private Ontology ontology;
+    //Attributes
+    private Codec       codec;
+    private Ontology    ontology;
+    private int         x;
+    private int         y;
+    private int         fleetSize;
 
-    private int x;
-    private int y;
 
+    // *************************************************************************
+    // setup - Initialization
+    // *************************************************************************
     public WarehouseAgent() {
         codec = new SLCodec(0); // fipa-sl0
         try {
             ontology = CompanyOntolagy.getInstance();
-        } catch (BeanOntologyException e) {
-            logger.error("Ontology error!", e);
+        } catch (BeanOntologyException ex) {
+            logger.error("Unable to set the Company ontology in warehouseAgent!", ex);
             doDelete();
         }
     }
@@ -35,22 +54,52 @@ public class WarehouseAgent extends Agent {
         // Setup content manager
         getContentManager().registerLanguage(codec);
         getContentManager().registerOntology(ontology);
-        // Get arguments (order number, coordX, coordY)
-        Object[] args = getArguments();
         String shopAgent = null;
-        if (args != null && args.length == 3) {
-            shopAgent = (String) args[0];
-            x = Integer.parseInt((String) args[1]);
-            y = Integer.parseInt((String) args[2]);
-            logger.debug("Arg: {} {} {}", shopAgent, x, y);
-        } else {
-            logger.error("Agent " + getLocalName() + " - Incorrect number of arguments");
+        try {
+            // Get arguments (order number, coordX, coordY, [drones])
+            Object[] args = getArguments();
+            shopAgent = this.processParameters(args);
+        } catch (Exception e) {
+            logger.error("Unable to start agent: "+getLocalName()+
+                    "\nUsage: shopName, x, y, [drones]" +
+                    "\nDrones value between "+FLEET_SIZE_MIN+" and "+FLEET_SIZE_MAX);
             doDelete();
         }
         // Register in ShopAgent
-        addBehaviour(new RegisterBehaviour(this, shopAgent));
+        this.addBehaviour(new RegisterBehaviour(this, shopAgent));
+        this.addBehaviour(new SetupFleetBehavior(this));
     }
 
+    /**
+     * Process the given parameters and return the ShopAgent name.
+     *
+     * @param args          Array of parameters
+     * @return              The ShopAgent name
+     * @throws Exception    If invalid parameters
+     */
+    private String processParameters(Object[] args) throws Exception {
+        if(args == null || (args.length != 3 && args.length != 4)){
+            throw new Exception("Invalid parameters for WarehouseAgent");
+        }
+        String shopAgent = (String) args[0];
+        //TODO update: att test x,y value integrity (Is on the map etc)
+        this.x = Integer.parseInt((String) args[1]);
+        this.y = Integer.parseInt((String) args[2]);
+        this.fleetSize = FLEET_SIZE_DEFAULT;
+        if(args.length == 4){
+            this.fleetSize = Integer.parseInt((String)args[3]);
+            if(this.fleetSize < FLEET_SIZE_MIN || this.fleetSize > FLEET_SIZE_MAX){
+                throw new Exception("Invalid parameters for WarehouseAgent");
+            }
+        }
+        logger.debug("Arg: {} {} {} {}", shopAgent, x, y, fleetSize);
+        return shopAgent;
+    }
+
+
+    // *************************************************************************
+    // Getters - Setters
+    // *************************************************************************
     public Codec getCodec() {
         return codec;
     }
