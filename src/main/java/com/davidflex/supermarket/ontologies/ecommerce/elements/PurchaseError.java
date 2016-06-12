@@ -6,7 +6,11 @@ import jade.content.Predicate;
  * Error while purchase process.
  */
 public class PurchaseError implements Predicate {
+
     private String message;
+
+    public PurchaseError() {
+    }
 
     public PurchaseError(String message){
         this.message = message;

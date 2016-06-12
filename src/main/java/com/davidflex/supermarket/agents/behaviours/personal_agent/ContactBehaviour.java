@@ -50,29 +50,25 @@ public class ContactBehaviour extends OneShotBehaviour {
 
             // Contact shop
             logger.info("Contacting shop...");
-            ((PersonalAgent) getAgent()).printStatus("Contacting " + shopAgent.getLocalName() + "..." );
+            ((PersonalAgent) getAgent()).printStatus("Contacting " + shopAgent.getLocalName() + "...");
             sendMessageShop(shopAgent);
 
             // Wait reply
             logger.info("Waiting answer from shop...");
             MessageTemplate mt = MessageTemplate.MatchSender(shopAgent);
             ACLMessage msg = getAgent().blockingReceive(mt);
-            if (msg != null) {
-                ContentElement ce = getAgent().getContentManager().extractContent(msg);
-                if (ce instanceof ContactResponse) {
-                    // Read content
-                    ContactResponse cr = (ContactResponse) ce;
-                    AID personalShopAgent = cr.getPersonalShopAgent();
-                    logger.info("Got response from shop. PSA: " + personalShopAgent.getLocalName());
-                    ((PersonalAgent) getAgent()).printStatus("Request accepted!" );
-                    ((PersonalAgent) getAgent()).printStatus(personalShopAgent.getLocalName() + " assigned to the order." );
-                    // Start buying procces
-                    getAgent().addBehaviour(new NegociationBehaviour(getAgent(), personalShopAgent));
-                } else {
-                    logger.error("Wrong message received.");
-                }
+            ContentElement ce = getAgent().getContentManager().extractContent(msg);
+            if (ce instanceof ContactResponse) {
+                // Read content
+                ContactResponse cr = (ContactResponse) ce;
+                AID personalShopAgent = cr.getPersonalShopAgent();
+                logger.info("Got response from shop. PSA: " + personalShopAgent.getLocalName());
+                ((PersonalAgent) getAgent()).printStatus("Request accepted!");
+                ((PersonalAgent) getAgent()).printStatus(personalShopAgent.getLocalName() + " assigned to the order.");
+                // Start buying procces
+                getAgent().addBehaviour(new NegociationBehaviour(getAgent(), personalShopAgent));
             } else {
-                logger.error("Corrupted message received.");
+                logger.error("Wrong message received.");
             }
         } catch (FIPAException e) {
             logger.error("Error with DF", e);
