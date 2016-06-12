@@ -56,13 +56,11 @@ public class RegisterBehaviour extends OneShotBehaviour {
             try {
                 MessageTemplate mt = MessageTemplate.MatchSender(shopAgent);
                 msg = getAgent().blockingReceive(mt);
-                if (msg != null) {
-                    ContentElement ce = getAgent().getContentManager().extractContent(msg);
-                    if (ce instanceof Done) {
-                        logger.info("Registered!");
-                    } else {
-                        logger.error("Wrong message received.");
-                    }
+                ContentElement ce = getAgent().getContentManager().extractContent(msg);
+                if (ce instanceof Done) {
+                    logger.info("Registered!");
+                } else {
+                    logger.error("Wrong message received.");
                 }
             } catch (OntologyException | Codec.CodecException e) {
                 logger.error("Error extracting msg.", e);
