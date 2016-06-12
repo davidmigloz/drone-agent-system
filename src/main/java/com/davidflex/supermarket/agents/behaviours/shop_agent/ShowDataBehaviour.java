@@ -1,6 +1,5 @@
 package com.davidflex.supermarket.agents.behaviours.shop_agent;
 
-import com.davidflex.supermarket.agents.behaviours.personal_shop_agent.CheckOrderItemsBehaviour;
 import com.davidflex.supermarket.agents.shop.ShopAgent;
 import com.davidflex.supermarket.gui.ShopAgentGuiActionsAdapter;
 import com.davidflex.supermarket.ontologies.company.elements.Position;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Updates the data of the GUI.
+ * Updates the data of the GUI every x seconds.
  * Used by ShopAgent.
  */
 public class ShowDataBehaviour extends TickerBehaviour {
