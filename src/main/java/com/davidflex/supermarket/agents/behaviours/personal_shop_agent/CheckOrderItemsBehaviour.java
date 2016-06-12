@@ -57,8 +57,8 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         }
 
         //Error if no warehouse available.
-        if(warehouses == null || warehouses.isEmpty()){
-            logger.error("No warehouses available.. Error sending message.");
+        if(warehouses.isEmpty()){
+            logger.error("No warehouses available... Error sending message.");
             this.sendPurchaseErrorToCustomer(buyerAID, "No warehouse available.");
             return; //Quit now
         }
@@ -150,10 +150,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
             //Otherwise, create the ConfirmPurchaseRequest for this warehouse
             ConfirmPurchaseRequest confirm = new ConfirmPurchaseRequest(
-                    ((PersonalShopAgent)getAgent()).getOrder(),
-                    received,
-                    w
-            );
+                    ((PersonalShopAgent)getAgent()).getOrder(), received, w);
             listConfirm.add(confirm);
 
             //Check the remaining items, continue if still some.
@@ -254,7 +251,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
             CheckStockItemsResponse response = (CheckStockItemsResponse)ce;
             return response.getItems(); //Can be empty if no items
         }
-        return new ArrayList<>(); //Shouldn't happen, but in case of.
+        return new ArrayList<>(0); //Shouldn't happen, but in case of.
     }
 
 
@@ -330,9 +327,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
             logger.error("GetListWarehousesResponse expected but wrong type received. " +
                     "The list of warehouses will probably be false.");
         }
-        //The list from GetListWarehousesResponse can be null in case of no warehouses
-        //and null should be returned!!! Empty list should be instead.
-        return (list != null) ? list : new ArrayList<>();
+        return list != null ? list : new ArrayList<>(0);
     }
 
 

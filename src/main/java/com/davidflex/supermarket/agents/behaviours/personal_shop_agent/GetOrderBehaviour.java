@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Get order info send by shopAgent.
+ * Get order info send by shopAgent and the items list send by the customer.
  * Used by personalShopAgent.
  */
 public class GetOrderBehaviour extends OneShotBehaviour {
