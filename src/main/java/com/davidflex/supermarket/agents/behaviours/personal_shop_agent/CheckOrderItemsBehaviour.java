@@ -74,7 +74,16 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         logger.info("Send request to warehouses (Starting by closest)");
         List<Item> requested = ((PersonalShopAgent)getAgent()).getOrder().getItems();
         List<ConfirmPurchaseRequest> listConfirm;
-        listConfirm = this.requestToWarehouses(warehouses, requested);
+        try {
+            listConfirm = this.requestToWarehouses(warehouses, requested);
+        } catch (Codec.CodecException | OntologyException ex) {
+            logger.error("Unable to send request to warehouse.", ex);
+            this.sendPurchaseErrorToCustomer(
+                    buyerAID,
+                    "Internal error occurred and selling has been cancelled."
+            );
+            return;
+        }
 
         //Create the list of available items to send to customer (Price + quantity)
         List<Item> cList = new ArrayList<>();
@@ -106,8 +115,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
         // CheckOrderItemsBehavior end and start Handle purchase
         logger.info("CheckOrderItemsBehavior is done and leave.");
-        //TODO Critique: add the load in parameter in handlerPurchaseB
-        getAgent().addBehaviour(new HandlePurchaseBehaviour(getAgent()));
+        getAgent().addBehaviour(new HandlePurchaseBehaviour(getAgent(), listConfirm));
     }
 
     /**
@@ -126,39 +134,32 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
      * @param items         List of items to request
      * @return The list of ConfirmPurchaseRequest
      */
-    private List<ConfirmPurchaseRequest> requestToWarehouses(List<Warehouse> warehouseList,
-                                                             List<Item> items) {
-        List<Item> remaining    = items;
-        List<Item> received     = null; //Items current warehouse can handle.
+    private List<ConfirmPurchaseRequest> requestToWarehouses(List<Warehouse> warehouseList, List<Item> items)
+            throws Codec.CodecException, OntologyException {
         List<ConfirmPurchaseRequest> listConfirm = new ArrayList<>();
+        List<Item> remaining = items;
+        List<Item> received; //Items current warehouse can handle.
 
         //Browse each warehouse for item availability and price.
         for(Warehouse w: warehouseList){
-            try {
-                this.sendListToWarehouse(w.getWarehouseAgent(), remaining);
-                received = this.blockReceiveListFromWarehouse(w.getWarehouseAgent());
+            this.sendListToWarehouse(w.getWarehouseAgent(), remaining);
+            received = this.blockReceiveListFromWarehouse(w.getWarehouseAgent());
 
-                //If this warehouse can't handle any items, switch to next.
-                if(received == null || received.isEmpty()){ continue; }
+            //If this warehouse can't handle any items, switch to next.
+            if(received == null || received.isEmpty()){ continue; }
 
-                //Otherwise, create the ConfirmPurchaseRequest for this warehouse
-                ConfirmPurchaseRequest confirm = new ConfirmPurchaseRequest(
-                        ((PersonalShopAgent)getAgent()).getOrder(),
-                        received,
-                        w
-                );
-                listConfirm.add(confirm);
+            //Otherwise, create the ConfirmPurchaseRequest for this warehouse
+            ConfirmPurchaseRequest confirm = new ConfirmPurchaseRequest(
+                    ((PersonalShopAgent)getAgent()).getOrder(),
+                    received,
+                    w
+            );
+            listConfirm.add(confirm);
 
-                //Check the remaining items, continue if still some.
-                remaining = checkMissingItems(received, remaining);
-                if(remaining == null || remaining.isEmpty()){
-                    break; //Every item has been assigned to a warehouse.
-                }
-            } catch (Codec.CodecException | OntologyException ex) {
-                //If a trouble appear while connecting with this warehouse, just
-                //skipp it. (Connection can be lost for this warehouse).
-                logger.warn("A request to warehouse {} failed and has been skipped.", w.toString());
-                logger.warn("Error message: ", ex);
+            //Check the remaining items, continue if still some.
+            remaining = checkMissingItems(received, remaining);
+            if(remaining == null || remaining.isEmpty()){
+                break; //Every item has been assigned to a warehouse.
             }
         }
         return listConfirm;
@@ -338,22 +339,6 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
     // *************************************************************************
     // List specific functions
     // *************************************************************************
-    /**
-     * Check whether the given item as an instance in the given list.
-     *
-     * @param list List where to check
-     * @param item Item to check in the list
-     * @return True if item has an instance in list
-     */
-    private boolean listContainsItemClass(List<Item> list, Item item) {
-        if(list == null){ return false; }
-        for (int k = 0; k < list.size(); k++) {
-            if(item.getClass().getSimpleName().equals(item.getClass().getSimpleName())){
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Check whether the given item as an instance in the given list and return its index.
