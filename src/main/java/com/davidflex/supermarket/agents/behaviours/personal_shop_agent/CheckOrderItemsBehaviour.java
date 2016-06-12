@@ -1,6 +1,7 @@
 package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
+import com.davidflex.supermarket.agents.utils.ListHelper;
 import com.davidflex.supermarket.agents.utils.WarehousesComparator;
 import com.davidflex.supermarket.ontologies.company.elements.*;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
@@ -22,8 +23,10 @@ import java.util.List;
 
 
 /**
- * Checks availability and price of all the items of the order.
- * Then it sends back a list with the available items together with their prices to the customer.
+ * Checks availability and price of all the items of an order.
+ * Then it sends back a list with the available items together with their prices
+ * to the customer. The load for each warehouse for this order is passed to
+ * the started HandlePurchaseBehavior.
  *
  * Used by PersonalShopAgent.
  *
@@ -39,7 +42,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
 
     // *************************************************************************
-    // Core functions
+    // Override functions
     // *************************************************************************
     @Override
     public void action() {
@@ -90,7 +93,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         //Browse each warehouse list of item managed and add in customer list.
         for(ConfirmPurchaseRequest c : listConfirm){
             for(Item i : c.getItems()){
-                int index = this.listIndexOfItemClass(cList, i);
+                int index = ListHelper.indexOfEltClass(cList, i);
                 //If item is not in the list, add it
                 if(index == -1){
                     cList.add(i);
@@ -118,6 +121,11 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         getAgent().addBehaviour(new HandlePurchaseBehaviour(getAgent(), listConfirm));
     }
 
+
+    // *************************************************************************
+    // Core functions
+    // *************************************************************************
+
     /**
      * Request the items to the given warehouses.
      * Request ask to the first warehouse on the list, if items are remaining,
@@ -134,7 +142,8 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
      * @param items         List of items to request
      * @return The list of ConfirmPurchaseRequest
      */
-    private List<ConfirmPurchaseRequest> requestToWarehouses(List<Warehouse> warehouseList, List<Item> items)
+    private List<ConfirmPurchaseRequest> requestToWarehouses(
+            List<Warehouse> warehouseList, List<Item> items)
             throws Codec.CodecException, OntologyException {
         List<ConfirmPurchaseRequest> listConfirm = new ArrayList<>();
         List<Item> remaining = items;
@@ -199,7 +208,8 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
      * @throws Codec.CodecException if error while sending
      * @throws OntologyException    if error while sending
      */
-    private void sendListToCustomer(AID buyer, List<Item> items) throws Codec.CodecException, OntologyException {
+    private void sendListToCustomer(AID buyer, List<Item> items)
+            throws Codec.CodecException, OntologyException {
         // Prepare message
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         msg.setSender(getAgent().getAID());
@@ -246,7 +256,9 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
      * @throws Codec.CodecException if unable to recover received message
      * @throws OntologyException    if unable to receover received message
      */
-    private List<Item> blockReceiveListFromWarehouse(AID warehouse) throws Codec.CodecException, OntologyException {
+    private List<Item> blockReceiveListFromWarehouse(AID warehouse)
+            throws Codec.CodecException, OntologyException {
+        //TODO update: possibly add a timeout
         MessageTemplate mt  = MessageTemplate.MatchSender(warehouse);
         ACLMessage      msg = this.getAgent().blockingReceive(mt);
         ContentElement  ce  = getAgent().getContentManager().extractContent(msg);
@@ -279,7 +291,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         //Browse each item from expected list
         for(Item item : expected){
             //Item not in the received, add to list
-            index = listIndexOfItemClass(received, item);
+            index = ListHelper.indexOfEltClass(received, item);
             if(index == -1){
                 list.add(item);
             }
@@ -333,27 +345,5 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         //The list from GetListWarehousesResponse can be null in case of no warehouses
         //and null should be returned!!! Empty list should be instead.
         return (list != null) ? list : new ArrayList<>();
-    }
-
-
-    // *************************************************************************
-    // List specific functions
-    // *************************************************************************
-
-    /**
-     * Check whether the given item as an instance in the given list and return its index.
-     *
-     * @param list List where to check
-     * @param item Item to check in the list
-     * @return item index in the list or -1 if this item is not in this list
-     */
-    private int listIndexOfItemClass(List<Item> list, Item item){
-        if(list == null){ return -1; }
-        for (int k = 0; k < list.size(); k++) {
-            if(item.getClass().getSimpleName().equals(item.getClass().getSimpleName())){
-                return k;
-            }
-        }
-        return -1;
     }
 }
