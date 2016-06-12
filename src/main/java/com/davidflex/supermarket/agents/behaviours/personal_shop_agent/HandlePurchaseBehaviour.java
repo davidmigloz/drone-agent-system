@@ -1,8 +1,12 @@
 package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
+import com.davidflex.supermarket.agents.utils.ListHelper;
 import com.davidflex.supermarket.ontologies.company.elements.ConfirmPurchaseRequest;
+import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Purchase;
+import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseError;
+import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
@@ -11,53 +15,209 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * Gets the purchase order with the list of items to purchase and contact with the proper warehouses
- * to deliver the items.
- *  Used by PersonalShopAgent.
+ * Finalize a purchase for an order.
+ * Gets the purchase order with the list of items to purchase and contact with
+ * the proper warehouses to deliver the items.
+ *
+ * Used by PersonalShopAgent.
+ *
+ * @since   June 10, 2016
+ * @author  Constantin MASSON
  */
-class HandlePurchaseBehaviour extends OneShotBehaviour{
-
+public class HandlePurchaseBehaviour extends OneShotBehaviour{
     private static final Logger logger = LoggerFactory.getLogger(HandlePurchaseBehaviour.class);
-    private List<ConfirmPurchaseRequest> listPurchase;
+    private List<ConfirmPurchaseRequest> listWarhousesLoad; //Load set for each warehouse
 
+    /**
+     * Create and start the HandlePurchaseBehavior.
+     *
+     * @param a     Agent linked with this behavior
+     * @param list  List of ConfirmPurchaseRequest linked with this purchase
+     */
     HandlePurchaseBehaviour(Agent a, List<ConfirmPurchaseRequest> list) {
         super(a);
-        this.listPurchase = list;
+        this.listWarhousesLoad = list;
     }
 
+
+    // *************************************************************************
+    // Override function
+    // *************************************************************************
     @Override
     public void action() {
-        // TODO contact with warehouse/s to deliver order
+        logger.info("Start handlePurchaseBehavior in PersonalShopAgent.");
+        AID buyerAID = ((PersonalShopAgent) getAgent()).getOrder().getBuyer();
 
-        // Send Done
-        sendDone(((PersonalShopAgent) getAgent()).getOrder().getBuyer());
+        try {
+            //Recover the list from customer and update the list of purchase
+            List<Item> listItems = this.blockReceivePurchaseResponse(buyerAID);
+            this.updateListPurchases(listItems);
 
+            //Send to each warehouse its load
+            for(ConfirmPurchaseRequest load : this.listWarhousesLoad){
+                this.sendListToWarehouse(load.getWarehouse().getWarehouseAgent(), load);
+            }
+
+            //TODO we could wait for a confirmation from warehouse.
+
+            //Send done confirmation to buyer
+            this.sendDone(buyerAID);
+        }
+        catch (Codec.CodecException | OntologyException ex) {
+            logger.error("Unable to process the received list from customer...");
+            this.sendPurchaseErrorToCustomer(
+                    buyerAID,
+                    "Selling has been cancelled because of internal issue..."
+            );
+        }
+    }
+
+
+    // *************************************************************************
+    // Core functions
+    // *************************************************************************
+
+    /**
+     * Update the load for each warehouse according to the given list of items.
+     * The original purchase list is the load assigned for each warehouse in case
+     * the customer buy every items he asked. however, some of them can be
+     * cancelled (Price to high etc). The new warehouse load must be updated
+     * to manage these changes.
+     *
+     * After this process, the given listItems will be empty.
+     *
+     * @param listItems List of items user actually wants to buy
+     */
+    private void updateListPurchases(List<Item> listItems){
+        int index, iQ, wQ;
+
+        //Browse each warehouse load.
+        for(ConfirmPurchaseRequest load : this.listWarhousesLoad){
+            //Compare warehouse list of item with customer list.
+            for(Item item : listItems){
+                //Skipp if this item has already been assigned.
+                if(item.getQuantity() == 0){ continue; }
+                index = ListHelper.indexOfEltClass(load.getItems(), item);
+                //Skipp if this item isn't managed by this warehouse
+                if(index == -1){ continue; }
+
+                iQ = item.getQuantity();
+                wQ = load.getItems().get(index).getQuantity();
+
+                //If warehouse quantity can be fully loaded for this item.
+                if(iQ > wQ){
+                    item.setQuantity(iQ - wQ); //Update remaining items to process
+                    //The load for item in warehouse doesn't change
+                }
+                //Else, the load required by warehouse is in fact more than asked by customer
+                else {
+                    load.getItems().get(index).setQuantity(item.getQuantity());
+                    item.setQuantity(0); //We are done with this item
+                }
+            }
+        }
+    }
+
+
+    // *************************************************************************
+    // Messaging function (Send / Receive)
+    // *************************************************************************
+
+    /**
+     * Send a ConfirmPurchaseRequest to one warehouse.
+     * The warehouse should be the one in charge of this purchase, otherwise,
+     * it might refuse it.
+     *
+     * @param warehouse             Warehouse where to send the bird
+     * @param purchaseRequest       Purchase this warehouse should process
+     * @throws Codec.CodecException If unable to create the message
+     * @throws OntologyException    If unable to create the message
+     */
+    private void sendListToWarehouse(AID warehouse, ConfirmPurchaseRequest purchaseRequest)
+            throws Codec.CodecException, OntologyException {
+        //Create message
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        msg.setSender(getAgent().getAID());
+        msg.addReceiver(warehouse);
+        msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
+        msg.setOntology(((PersonalShopAgent) getAgent()).getCompanyOntology().getName());
+        //Fill msg content and send it like a boss
+        getAgent().getContentManager().fillContent(msg, purchaseRequest);
+        getAgent().send(msg);
     }
 
     /**
-     * Send confirmation that the order has been recorded succesfully.
+     * Send confirmation that the order has been recorded successfully.
+     *
+     * @param buyer                 AID where to send message.
+     * @throws Codec.CodecException if error while creating message
+     * @throws OntologyException    if error while creating message
      */
-    private void sendDone(AID buyer) {
+    private void sendDone(AID buyer) throws Codec.CodecException, OntologyException {
+        // Prepare message
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        msg.setSender(getAgent().getAID());
+        msg.addReceiver(buyer);
+        msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
+        msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntology().getName());
+        // Fill the content and send message
+        Done d = new Done(new Action(getAgent().getAID(), new Purchase()));
+        getAgent().getContentManager().fillContent(msg, d);
+        getAgent().send(msg);
+    }
+
+    /**
+     * Wait for purchase message from customer.
+     * Received message should be a Purchase, otherwise, empty list is returned.
+     *
+     * @param buyerAID              Customer to wait for
+     * @return                      List of items customer wants to buy
+     * @throws Codec.CodecException if unable to process the received message
+     * @throws OntologyException    if unable to process the received message
+     */
+    private List<Item> blockReceivePurchaseResponse(AID buyerAID)
+            throws Codec.CodecException, OntologyException {
+        //TODO update: possibly add a timeout
+        MessageTemplate mt  = MessageTemplate.MatchSender(buyerAID);
+        ACLMessage      msg = this.getAgent().blockingReceive(mt);
+        ContentElement  ce  = getAgent().getContentManager().extractContent(msg);
+        if(ce instanceof Purchase){
+            Purchase response = (Purchase)ce;
+            return response.getItems(); //Can be empty if no items
+        }
+        return new ArrayList<>(); //In case of wrong message
+    }
+
+    /**
+     * Send a error message to a buyer.
+     * If unable to send, err message is displayed (Customer disconnected or unreachable)
+     *
+     * @param buyer     Where to send error message
+     * @param message   Error message.
+     */
+    private void sendPurchaseErrorToCustomer(AID buyer, String message){
         try {
             // Prepare message
-            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+            ACLMessage msg = new ACLMessage(ACLMessage.FAILURE);
             msg.setSender(getAgent().getAID());
             msg.addReceiver(buyer);
             msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
             msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntology().getName());
-            // Fill the content
-            Done d = new Done(new Action(getAgent().getAID(), new Purchase()));
-            getAgent().getContentManager().fillContent(msg, d);
-            // Send message
+            // Fill the content and send the message
+            PurchaseError errMsg = new PurchaseError(message);
+            getAgent().getContentManager().fillContent(msg, errMsg);
             getAgent().send(msg);
         } catch (Codec.CodecException | OntologyException e) {
-            logger.error("Error filling msg.", e);
+            logger.error("Unable to send purchaseError message.");
         }
     }
 }
