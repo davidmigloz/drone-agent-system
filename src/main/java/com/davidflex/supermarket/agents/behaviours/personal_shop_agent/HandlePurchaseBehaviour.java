@@ -1,6 +1,7 @@
 package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
+import com.davidflex.supermarket.ontologies.company.elements.ConfirmPurchaseRequest;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Purchase;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
@@ -13,6 +14,8 @@ import jade.lang.acl.ACLMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * Gets the purchase order with the list of items to purchase and contact with the proper warehouses
  * to deliver the items.
@@ -21,9 +24,11 @@ import org.slf4j.LoggerFactory;
 class HandlePurchaseBehaviour extends OneShotBehaviour{
 
     private static final Logger logger = LoggerFactory.getLogger(HandlePurchaseBehaviour.class);
+    private List<ConfirmPurchaseRequest> listPurchase;
 
-    HandlePurchaseBehaviour(Agent a) {
+    HandlePurchaseBehaviour(Agent a, List<ConfirmPurchaseRequest> list) {
         super(a);
+        this.listPurchase = list;
     }
 
     @Override
