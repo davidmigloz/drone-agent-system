@@ -47,30 +47,30 @@ public class NegociationBehaviour extends OneShotBehaviour {
 
         // Get reply and check availability and prices
         try {
-            logger.info("Waiting answer from ");
+            logger.info("Waiting afor reply...");
             ACLMessage msg = getAgent().blockingReceive(mt);
-            if (msg != null) {
-                ContentElement ce = getAgent().getContentManager().extractContent(msg);
-                if (ce instanceof PurchaseRespond) {
-                    logger.info("Checking items.");
-                    ((PersonalAgent) getAgent()).printStatus("Reply received. Checking items...");
-                    // Read content
-                    PurchaseRespond pr = (PurchaseRespond) ce;
-                    // Check items
-                    finalItemList = checkItems(pr.getItem());
-                } else if(ce instanceof PurchaseError){
-                    //If error occurred.
-                    //TODO update: add cancelled status
-                    ((PersonalAgent) getAgent()).printStatus("Error occurred.");
-                    logger.error("Error occurred (PurchaseError received)");
-                    return;
-                }
-                else {
-                    logger.error("Wrong message received.");
-                }
+            ContentElement ce = getAgent().getContentManager().extractContent(msg);
+            if (ce instanceof PurchaseRespond) {
+                logger.info("Checking items...");
+                ((PersonalAgent) getAgent()).printStatus("Reply received. Checking items...");
+                // Read content
+                PurchaseRespond pr = (PurchaseRespond) ce;
+                // Check items
+                finalItemList = checkItems(pr.getItem());
+            } else if (ce instanceof PurchaseError) {
+                logger.error("Error occurred (PurchaseError received)");
+                // Read content
+                PurchaseError pe = (PurchaseError) ce;
+                // Cancel order
+                ((PersonalAgent) getAgent()).cancelOrder(pe.getMessage());
+                return;
+            } else {
+                logger.error("Wrong message received.");
+                return;
             }
         } catch (OntologyException | Codec.CodecException e) {
             logger.error("Error extracting msg.", e);
+            return;
         }
 
         // Send purchase message with the final order
@@ -151,17 +151,17 @@ public class NegociationBehaviour extends OneShotBehaviour {
         boolean checked;
 
         // For each item in user list
-        for(Item itUser : ((PersonalAgent) getAgent()).getObservableListItems()) {
+        for (Item itUser : ((PersonalAgent) getAgent()).getObservableListItems()) {
             checked = false;
             // Check if it is in the receive list
             for (int j = 0; j < receivedList.size(); j++) {
                 Item itShop = receivedList.get(j);
-                if(itUser.getClass().getSimpleName().equals(itShop.getClass().getSimpleName())) {
+                if (itUser.getClass().getSimpleName().equals(itShop.getClass().getSimpleName())) {
                     receivedList.remove(j);
                     checked = true;
                     // Check price
                     itUser.setPrice(itShop.getPrice());
-                    if(itShop.getPrice() > itUser.getMaxPrice()) {
+                    if (itShop.getPrice() > itUser.getMaxPrice()) {
                         // If more expensive -> don't buy
                         itUser.setStatus("Max. price violation.");
                         ((PersonalAgent) getAgent()).printStatus(
@@ -175,7 +175,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
                 }
             }
             // Check if not available
-            if(!checked) {
+            if (!checked) {
                 itUser.setStatus("Not available.");
                 ((PersonalAgent) getAgent()).printStatus(
                         "The product " + itUser.getClass().getSimpleName() + " is not available.");
