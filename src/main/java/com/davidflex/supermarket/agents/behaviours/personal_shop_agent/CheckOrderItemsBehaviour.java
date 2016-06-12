@@ -20,10 +20,15 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Checks availability and price of all the items of the order.
  * Then it sends back a list with the available items together with their prices to the customer.
+ *
  * Used by PersonalShopAgent.
+ *
+ * @since   June 10, 2016
+ * @author  Constantin MASSON
  */
 public class CheckOrderItemsBehaviour extends OneShotBehaviour{
     private static final Logger logger = LoggerFactory.getLogger(CheckOrderItemsBehaviour.class);
@@ -38,106 +43,125 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
     // *************************************************************************
     @Override
     public void action() {
-        logger.info("Checking items availability...");
+        logger.info("Checking items availability in warehouses...");
         AID buyerAID = ((PersonalShopAgent)getAgent()).getOrder().getBuyer();
 
-        // Request list of warehouses and sort them by closet distance
+        // Request list of warehouses
         logger.info("Request list of warehouses available.");
-        List<Warehouse> warehouses = null;
+        List<Warehouse> warehouses;
         try {
-            warehouses = getWarehouses(); //Return empty in case of no warehouses.
-            warehouses.sort(new WarehousesComparator(((PersonalShopAgent) getAgent()).getOrder().getLocation()));
-            logger.info("List of warehouses received (And sorted):");
-            for(Warehouse w : warehouses) {
-                logger.debug("Warehouse: " + w.getLocation().getX() + "/" + w.getLocation().getY());
-            }
-        } catch (Codec.CodecException | OntologyException e) {
-            logger.error("Unable to recover the list of warehouses.");
-            return;
+            warehouses = getWarehouses();
+        } catch (Codec.CodecException | OntologyException ex) {
+            logger.error("Unable to recover the list of warehouses.", ex);
+            return; //Quit now
         }
 
         //Error if no warehouse available.
-        if(warehouses.isEmpty()){
+        if(warehouses == null || warehouses.isEmpty()){
             logger.error("No warehouses available.. Error sending message.");
-            this.sendPurchaseError(buyerAID, "No warehouse available.");
+            this.sendPurchaseErrorToCustomer(buyerAID, "No warehouse available.");
             return; //Quit now
         }
-        logger.info("At least one warehouse is available.");
 
-        //Send the list of items to the closest warehouse and receive warehouses load.
+        //Sort warehouses by closet distance
+        warehouses.sort(new WarehousesComparator(((PersonalShopAgent) getAgent()).getOrder().getLocation()));
+        logger.info("List of warehouses received (And sorted):");
+        for(Warehouse w : warehouses) {
+            logger.debug("Warehouse: " + w.getLocation().getX() + "/" + w.getLocation().getY());
+        }
+
+        //Request the warehouse for the availability of items (Starting by closest)
         logger.info("Send request to warehouses (Starting by closest)");
         List<Item> requested = ((PersonalShopAgent)getAgent()).getOrder().getItems();
-        List<List<Item>> wLoad = null;
-        wLoad = this.requestToWarehouses(warehouses, requested);
+        List<ConfirmPurchaseRequest> listConfirm;
+        listConfirm = this.requestToWarehouses(warehouses, requested);
 
-        //TODO Update: item list data in PersonalShopAgent could be updated
+        //Create the list of available items to send to customer (Price + quantity)
+        List<Item> cList = new ArrayList<>();
+        //Browse each warehouse list of item managed and add in customer list.
+        for(ConfirmPurchaseRequest c : listConfirm){
+            for(Item i : c.getItems()){
+                int index = this.listIndexOfItemClass(cList, i);
+                //If item is not in the list, add it
+                if(index == -1){
+                    cList.add(i);
+                }
+                //Otherwise, just add its quantity
+                else {
+                    cList.get(index).setQuantity(cList.get(index).getQuantity()+i.getQuantity());
+                }
+            }
+        }
+
+        //TODO Update: item list data in PersonalShopAgent could be updated if needed.
 
         //Send available items list to customer
         logger.info("Sending available items to customer...");
-        //Create list from load
-        List<Item> availableItems = new ArrayList<>();
-        for(List<Item> listItems : wLoad){
-            for(Item item : listItems){
-                availableItems.add(item);
-            }
-        }
-        //Send list. If error, stop here. (Can be lost connection etc)
         try {
-            this.sendListToCustomer(buyerAID, availableItems);
-        } catch (Codec.CodecException | OntologyException e) {
-            logger.error("[CRITIQUE] Unable to send list of item to customer.");
-            return;
+            this.sendListToCustomer(buyerAID, cList);
+        } catch (Codec.CodecException | OntologyException ex) {
+            logger.error("Unable to send the list of available items to the customer. ", ex);
+            return; //Important to quite now instead of starting next behavior.
         }
 
         // CheckOrderItemsBehavior end and start Handle purchase
         logger.info("CheckOrderItemsBehavior is done and leave.");
-        //TODO Critique: add the load in parameter.
+        //TODO Critique: add the load in parameter in handlerPurchaseB
         getAgent().addBehaviour(new HandlePurchaseBehaviour(getAgent()));
     }
 
     /**
      * Request the items to the given warehouses.
      * Request ask to the first warehouse on the list, if items are remaining,
-     * ask to the second till all items get a warehouse and return the load for
-     * each warehouses (returned list order follow the warehouse order)
+     * ask to the second till all items get a warehouse and return the list
+     * of ConfirmPurchaseRequest (On for each warehouse that will be in charge
+     * of this order.)
      *
-     * Note the load size can be smaller than warehouseList since it is filled
-     * since the last warehouse with items. (For example, if for item A,B,C and
-     * warehouses W1, W2, W3, W4, W5.
-     * If W1 got B and W3 got A,C. Returned list will be size 3:
-     * 0 -> B
-     * 1 -> empty
-     * 2 -> A,C
+     * If no warehouse can handle any item, an empty list will be returned.
+     *
+     * Note: The same item can be requested for 2 warehouse.
+     * For example, 20 items A requested and 2 warehouses have each 10 of them.
      *
      * @param warehouseList List of warehouse where to check for products
      * @param items         List of items to request
-     * @return The load (list of Items) for the warehouses
+     * @return The list of ConfirmPurchaseRequest
      */
-    private List<List<Item>> requestToWarehouses(List<Warehouse> warehouseList, List<Item> items) {
+    private List<ConfirmPurchaseRequest> requestToWarehouses(List<Warehouse> warehouseList,
+                                                             List<Item> items) {
         List<Item> remaining    = items;
-        List<Item> received     = null;
-        List<List<Item>> wLoad  = new ArrayList<>(); //Items for each warehouse
+        List<Item> received     = null; //Items current warehouse can handle.
+        List<ConfirmPurchaseRequest> listConfirm = new ArrayList<>();
 
         //Browse each warehouse for item availability and price.
         for(Warehouse w: warehouseList){
             try {
                 this.sendListToWarehouse(w.getWarehouseAgent(), remaining);
                 received = this.blockReceiveListFromWarehouse(w.getWarehouseAgent());
-                wLoad.add(received); //Add load for this warehouse (Even if empty)
+
+                //If this warehouse can't handle any items, switch to next.
+                if(received == null || received.isEmpty()){ continue; }
+
+                //Otherwise, create the ConfirmPurchaseRequest for this warehouse
+                ConfirmPurchaseRequest confirm = new ConfirmPurchaseRequest(
+                        ((PersonalShopAgent)getAgent()).getOrder(),
+                        received,
+                        w
+                );
+                listConfirm.add(confirm);
+
+                //Check the remaining items, continue if still some.
                 remaining = checkMissingItems(received, remaining);
-                //Stop if all items received.
-                if(remaining.isEmpty()){
-                    break;
+                if(remaining == null || remaining.isEmpty()){
+                    break; //Every item has been assigned to a warehouse.
                 }
             } catch (Codec.CodecException | OntologyException ex) {
                 //If a trouble appear while connecting with this warehouse, just
                 //skipp it. (Connection can be lost for this warehouse).
-                wLoad.add(new ArrayList<>()); //Empty list for this warehouse.
                 logger.warn("A request to warehouse {} failed and has been skipped.", w.toString());
                 logger.warn("Error message: ", ex);
             }
         }
-        return wLoad;
+        return listConfirm;
     }
 
 
@@ -188,33 +212,13 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
     }
 
     /**
-     * Wait for a message from the given warehouse.
-     * Message received should be a valid response for sock item, otherwise,
-     * a empty list will be returned.
-     *
-     * @param warehouse Warehouse to wait for.
-     * @return
-     * @throws Codec.CodecException
-     * @throws OntologyException
-     */
-    private List<Item> blockReceiveListFromWarehouse(AID warehouse) throws Codec.CodecException, OntologyException {
-        MessageTemplate mt  = MessageTemplate.MatchSender(warehouse);
-        ACLMessage      msg = this.getAgent().blockingReceive(mt);
-        ContentElement  ce  = getAgent().getContentManager().extractContent(msg);
-        if( ce instanceof CheckStockItemsResponse){
-            CheckStockItemsResponse response = (CheckStockItemsResponse)ce;
-            return response.getItems(); //Can be empty if no items
-        }
-        return new ArrayList<>(); //Shouldn't happen.
-    }
-
-    /**
      * Send a error message to a buyer.
+     * If unable to send, err message is displayed (Customer disconnected or unreachable)
      *
      * @param buyer     Where to send error message
      * @param message   Error message.
      */
-    private void sendPurchaseError(AID buyer, String message){
+    private void sendPurchaseErrorToCustomer(AID buyer, String message){
         try {
             // Prepare message
             ACLMessage msg = new ACLMessage(ACLMessage.FAILURE);
@@ -227,8 +231,29 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
             getAgent().getContentManager().fillContent(msg, errMsg);
             getAgent().send(msg);
         } catch (Codec.CodecException | OntologyException e) {
-            logger.error("[Err] Unable to send purchaseError message.");
+            logger.error("Unable to send purchaseError message.");
         }
+    }
+
+    /**
+     * Wait for a message from the given warehouse.
+     * Message received should be a valid response for sock item, otherwise,
+     * a empty list will be returned. (CheckStockItemsResponse expected)
+     *
+     * @param warehouse Warehouse to wait for.
+     * @return List of items (With they quantity)
+     * @throws Codec.CodecException if unable to recover received message
+     * @throws OntologyException    if unable to receover received message
+     */
+    private List<Item> blockReceiveListFromWarehouse(AID warehouse) throws Codec.CodecException, OntologyException {
+        MessageTemplate mt  = MessageTemplate.MatchSender(warehouse);
+        ACLMessage      msg = this.getAgent().blockingReceive(mt);
+        ContentElement  ce  = getAgent().getContentManager().extractContent(msg);
+        if(ce instanceof CheckStockItemsResponse){
+            CheckStockItemsResponse response = (CheckStockItemsResponse)ce;
+            return response.getItems(); //Can be empty if no items
+        }
+        return new ArrayList<>(); //Shouldn't happen, but in case of.
     }
 
 
@@ -238,17 +263,32 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
     /**
      * Return a list with missing element. (Element present in expected but missing in received).
      * Received list will in the best case contains all the expected element.
+     * Important: the quantity for each item matter. (If quantity is expected for
+     * an item A, and only 2 are find, still one is required).
      *
      * @param received  Received list to test
      * @param expected  Expected list
      * @return New list with missing elements
-     * @throws NullPointerException if listReceived is null
+     * @throws NullPointerException if received is null
      */
     private List<Item> checkMissingItems(List<Item> received, List<Item> expected){
         List<Item> list = new ArrayList<>();
-        for(Item i:expected){
-            if(!received.contains(i)){
-                list.add(i.clone()); //Clone to remove link between the 2 list.
+        int remainStock, index;
+
+        //Browse each item from expected list
+        for(Item item : expected){
+            //Item not in the received, add to list
+            index = listIndexOfItemClass(received, item);
+            if(index == -1){
+                list.add(item);
+            }
+            //Else, check how much item remains in expected after sub received stock.
+            remainStock = item.getQuantity() - received.get(index).getQuantity();
+            //If some items remain for this type
+            if(remainStock > 0){
+                Item i = received.get(index);
+                i.setQuantity(remainStock);
+                list.add(i);
             }
         }
         return list;
@@ -269,6 +309,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         msg.addReceiver(((PersonalShopAgent) getAgent()).getShopAgent());
         msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
         msg.setOntology(((PersonalShopAgent) getAgent()).getCompanyOntology().getName());
+
         // Fill the content and send it
         GetListWarehousesRequest request = new GetListWarehousesRequest();
         getAgent().getContentManager().fillContent(msg, request);
@@ -278,14 +319,56 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         //Wait for message using template.
         MessageTemplate mt = MessageTemplate.MatchSender(((PersonalShopAgent) getAgent()).getShopAgent());
         ACLMessage response = getAgent().blockingReceive(mt);
-        //Recover message content are get list.
+
+        //Recover message content and get list.
         ContentElement ce = getAgent().getContentManager().extractContent(response);
         if (ce instanceof GetListWarehousesResponse) {
             GetListWarehousesResponse wResonse = (GetListWarehousesResponse) ce;
             list = wResonse.getWarehouses();
         } else {
-            logger.error("Wrong message received.");
+            logger.error("GetListWarehousesResponse expected but wrong type received. " +
+                    "The list of warehouses will probably be false.");
         }
+        //The list from GetListWarehousesResponse can be null in case of no warehouses
+        //and null should be returned!!! Empty list should be instead.
         return (list != null) ? list : new ArrayList<>();
+    }
+
+
+    // *************************************************************************
+    // List specific functions
+    // *************************************************************************
+    /**
+     * Check whether the given item as an instance in the given list.
+     *
+     * @param list List where to check
+     * @param item Item to check in the list
+     * @return True if item has an instance in list
+     */
+    private boolean listContainsItemClass(List<Item> list, Item item) {
+        if(list == null){ return false; }
+        for (int k = 0; k < list.size(); k++) {
+            if(item.getClass().getSimpleName().equals(item.getClass().getSimpleName())){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check whether the given item as an instance in the given list and return its index.
+     *
+     * @param list List where to check
+     * @param item Item to check in the list
+     * @return item index in the list or -1 if this item is not in this list
+     */
+    private int listIndexOfItemClass(List<Item> list, Item item){
+        if(list == null){ return -1; }
+        for (int k = 0; k < list.size(); k++) {
+            if(item.getClass().getSimpleName().equals(item.getClass().getSimpleName())){
+                return k;
+            }
+        }
+        return -1;
     }
 }

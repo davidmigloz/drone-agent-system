@@ -1,6 +1,7 @@
 package com.davidflex.supermarket.ontologies.company.elements;
 
 import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import jade.content.Predicate;
 
 import java.util.List;
 
@@ -11,8 +12,8 @@ import java.util.List;
  * @since   June 10, 2016
  */
 @SuppressWarnings("unused")
-public class CheckStockItemsResponse {
-    private List<Item> items;
+public class CheckStockItemsResponse implements Predicate{
+    private List<Item> items; //Items (With stock)
 
     public CheckStockItemsResponse(List<Item> listItems){
         this.items = listItems;
