@@ -1,6 +1,7 @@
 package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
+import com.davidflex.supermarket.ontologies.company.elements.AssignOrder;
 import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRequest;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
@@ -13,38 +14,52 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Get the list of items that the user wants to buy.
- * Used by PersonalShopAgent.
+ * Get order info send by shopAgent.
+ * Used by personalShopAgent.
  */
 public class GetOrderBehaviour extends OneShotBehaviour {
 
     private static final Logger logger = LoggerFactory.getLogger(GetOrderBehaviour.class);
 
-    private MessageTemplate mt;
-
     public GetOrderBehaviour(Agent a) {
         super(a);
-        mt = MessageTemplate.MatchSender(((PersonalShopAgent) getAgent()).getOrder().getBuyer());
     }
 
     @Override
     public void action() {
-        ACLMessage msg = getAgent().blockingReceive(mt);
-        if (msg != null) {
-            try {
-                ContentElement ce = getAgent().getContentManager().extractContent(msg);
-                if (ce instanceof PurchaseRequest) {
-                    logger.info("Item list received!");
-                    // Get content
-                    PurchaseRequest pr = (PurchaseRequest) ce;
-                    // Save list
-                    ((PersonalShopAgent) getAgent()).getOrder().setItems(pr.getItem());
-                    // Check items
-                    getAgent().addBehaviour(new CheckOrderItemsBehaviour(getAgent()));
-                }
-            } catch (Codec.CodecException | OntologyException e) {
-                logger.error("Error at extracting message", e);
+        MessageTemplate mt;
+        try {
+            // Get order info from ShopAgent (orderID, buyer, location)
+            mt = MessageTemplate.MatchOntology(((PersonalShopAgent) getAgent()).getCompanyOntology().getName());
+            ACLMessage msg = getAgent().blockingReceive(mt);
+            ContentElement ce = getAgent().getContentManager().extractContent(msg);
+            if (ce instanceof AssignOrder) {
+                logger.info("Order info received!");
+                // Get content
+                AssignOrder ao = (AssignOrder) ce;
+                // Save order and shopAgent
+                ((PersonalShopAgent) getAgent()).setShopAgent(msg.getSender());
+                ((PersonalShopAgent) getAgent()).setOrder(ao.getOrder());
+                // Send confirmation
+                msg = msg.createReply();
+                getAgent().send(msg);
             }
+
+            // Get item list from customer
+            mt = MessageTemplate.MatchSender(((PersonalShopAgent) getAgent()).getOrder().getBuyer());
+            msg = getAgent().blockingReceive(mt);
+            ce = getAgent().getContentManager().extractContent(msg);
+            if (ce instanceof PurchaseRequest) {
+                logger.info("Item list received!");
+                // Get content
+                PurchaseRequest pr = (PurchaseRequest) ce;
+                // Save list
+                ((PersonalShopAgent) getAgent()).getOrder().setItems(pr.getItem());
+                // Check items
+                getAgent().addBehaviour(new CheckOrderItemsBehaviour(getAgent()));
+            }
+        } catch (Codec.CodecException | OntologyException e) {
+            logger.error("Error at extracting message", e);
         }
     }
 }
