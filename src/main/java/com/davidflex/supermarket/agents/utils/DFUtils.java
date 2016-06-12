@@ -6,6 +6,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 
+@SuppressWarnings("unused")
 public class DFUtils {
 
     public static void registerInDF(Agent myAgent, String name, String type) throws FIPAException {
@@ -41,10 +42,6 @@ public class DFUtils {
         ServiceDescription sd = new ServiceDescription();
         sd.setName(myAgent.getName());
         dfd.addServices(sd);
-        if(DFService.search(myAgent, dfd) == null){
-            return true;
-        }else{
-            return false;
-        }
+        return DFService.search(myAgent, dfd) == null;
     }
 }
