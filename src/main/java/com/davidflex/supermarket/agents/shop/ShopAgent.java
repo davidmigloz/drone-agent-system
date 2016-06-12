@@ -98,26 +98,6 @@ public class ShopAgent extends Agent {
         }
     }
 
-    /**
-     * Register a new order.
-     *
-     * @param location customer location
-     * @return orderID
-     */
-    public long addNewOrder(Location location) {
-        long num = orderIDs.incrementAndGet();
-        activeOrders.put(num, location);
-        return num;
-    }
-
-    public void registerWarehouse(Warehouse warehouse) {
-        warehouses.add(warehouse);
-    }
-
-    public List<Warehouse> getWarehouses() {
-        return warehouses;
-    }
-
     public Codec getCodec() {
         return codec;
     }
@@ -134,15 +114,39 @@ public class ShopAgent extends Agent {
         return container;
     }
 
-    public void setDronePosition(AID drone, Position position){
-        drones.put(drone, position);
-    }
-
-    public Map<AID, Position> getDrones() {
-        return drones;
+    /**
+     * Register a new order.
+     *
+     * @param location customer location
+     * @return orderID
+     */
+    public long addNewOrder(Location location) {
+        long num = orderIDs.incrementAndGet();
+        activeOrders.put(num, location);
+        return num;
     }
 
     public Map<Long, Location> getActiveOrders() {
         return activeOrders;
+    }
+
+    public void registerWarehouse(Warehouse warehouse) {
+        warehouses.add(warehouse);
+    }
+
+    public List<Warehouse> getWarehouses() {
+        return warehouses;
+    }
+
+    public void setDronePosition(AID drone, Position position){
+        drones.put(drone, position);
+    }
+
+    public void unregisterDrone(AID drone) {
+        drones.remove(drone);
+    }
+
+    public Map<AID, Position> getDrones() {
+        return drones;
     }
 }

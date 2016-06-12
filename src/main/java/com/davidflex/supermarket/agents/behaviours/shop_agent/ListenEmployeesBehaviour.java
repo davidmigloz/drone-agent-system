@@ -1,10 +1,7 @@
 package com.davidflex.supermarket.agents.behaviours.shop_agent;
 
 import com.davidflex.supermarket.agents.shop.ShopAgent;
-import com.davidflex.supermarket.ontologies.company.elements.GetListWarehousesRequest;
-import com.davidflex.supermarket.ontologies.company.elements.GetListWarehousesResponse;
-import com.davidflex.supermarket.ontologies.company.elements.InformPosition;
-import com.davidflex.supermarket.ontologies.company.elements.RegisterWarehouse;
+import com.davidflex.supermarket.ontologies.company.elements.*;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
@@ -47,6 +44,11 @@ public class ListenEmployeesBehaviour extends CyclicBehaviour {
                         RegisterWarehouse rw = (RegisterWarehouse) a.getAction();
                         ((ShopAgent) getAgent()).registerWarehouse(rw.getWarehouse());
                         sendDone(msg.getSender(), a);
+                    } else if (a.getAction() instanceof UnregisterDrone) {
+                        // Unregistering drone
+                        logger.info("Unregistering drone: " + msg.getSender().getLocalName());
+                        UnregisterDrone ud = (UnregisterDrone) a.getAction();
+                        ((ShopAgent) getAgent()).unregisterDrone(ud.getDrone());
                     }
                 } else if (ce instanceof GetListWarehousesRequest) {
                     // Send list of warehouses
