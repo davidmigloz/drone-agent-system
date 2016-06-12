@@ -82,7 +82,7 @@ public class ShopAgentGuiController implements ShopAgentGuiActions {
     }
 
     private void clearCanvas() {
-        canvas.getGraphicsContext2D().setFill(new ImagePattern(bg));
+        canvas.getGraphicsContext2D().setFill(new ImagePattern(bg, 0, 0, bg.getWidth(), bg.getHeight(), false));
         canvas.getGraphicsContext2D().fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
     }
 
