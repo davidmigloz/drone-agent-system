@@ -2,14 +2,20 @@ package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.RegisterBehaviour;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.SetupFleetBehavior;
+import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
+import jade.core.AID;
 import jade.core.Agent;
+import jade.wrapper.ContainerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -28,19 +34,24 @@ public class WarehouseAgent extends Agent {
     private static int FLEET_SIZE_MAX       = 42;
     private static int FLEET_SIZE_DEFAULT   = 5;
 
-    //Attributes
-    private Codec       codec;
-    private Ontology    ontology;
+    //Attributes Jade
+    private Codec               codec;
+    private Ontology            ontology;
+    private ContainerController container;
+
+    //Warehouse Attributes
     private int         x;
     private int         y;
     private int         fleetSize;
+    private List<AID>   fleet;
 
 
     // *************************************************************************
     // setup - Initialization
     // *************************************************************************
     public WarehouseAgent() {
-        codec = new SLCodec(0); // fipa-sl0
+        this.fleet = new ArrayList<>(FLEET_SIZE_DEFAULT);
+        this.codec = new SLCodec(0); // fipa-sl0
         try {
             ontology = CompanyOntolagy.getInstance();
         } catch (BeanOntologyException ex) {
@@ -65,6 +76,8 @@ public class WarehouseAgent extends Agent {
                     "\nDrones value between "+FLEET_SIZE_MIN+" and "+FLEET_SIZE_MAX);
             doDelete();
         }
+        //Create the container for this warehouse
+        this.container = JadeUtils.createContainer("warehouse-"+x+"-"+y);
         // Register in ShopAgent
         this.addBehaviour(new RegisterBehaviour(this, shopAgent));
         this.addBehaviour(new SetupFleetBehavior(this));
@@ -114,5 +127,17 @@ public class WarehouseAgent extends Agent {
 
     public int getY() {
         return y;
+    }
+
+    public int getFleetSize(){
+        return this.fleetSize;
+    }
+
+    public List<AID> getFleet(){
+        return this.fleet;
+    }
+
+    public ContainerController getContainer(){
+        return this.container;
     }
 }
