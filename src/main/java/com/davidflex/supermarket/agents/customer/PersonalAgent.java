@@ -30,6 +30,7 @@ public class PersonalAgent extends Agent {
     private Ontology ontology;
 
     private int orderNumber;
+    private long orderId;
     private Location location;
     private ObservableList<Item> items;
 
@@ -110,10 +111,27 @@ public class PersonalAgent extends Agent {
         PersonalAgentGuiActionsAdapter.actionAppendStatusMsg(orderNumber, msg);
     }
 
+    public long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
+    }
+
     public void cancelOrder(String reason) {
         for (Item i : items) {
             i.setStatus("Cancelled.");
         }
         printStatus("The order was cancelled: " + reason);
+    }
+
+    public void updateItemStatus(String item, String status) {
+        for(Item i : items) {
+            if(i.getClass().getSimpleName().equals(item)) {
+                i.setStatus(status);
+                break;
+            }
+        }
     }
 }

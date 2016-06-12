@@ -23,7 +23,7 @@ import java.util.List;
  * items that fullfil the user requirements (max. price).
  * Used by PersonalAgent.
  */
-public class NegociationBehaviour extends OneShotBehaviour {
+class NegociationBehaviour extends OneShotBehaviour {
 
     private static final Logger logger = LoggerFactory.getLogger(NegociationBehaviour.class);
 
@@ -31,7 +31,7 @@ public class NegociationBehaviour extends OneShotBehaviour {
     private List<Item> finalItemList;
     private MessageTemplate mt;
 
-    public NegociationBehaviour(Agent a, AID personalShopAgent) {
+    NegociationBehaviour(Agent a, AID personalShopAgent) {
         super(a);
         this.personalShopAgent = personalShopAgent;
         mt = MessageTemplate.MatchSender(personalShopAgent);
@@ -89,9 +89,8 @@ public class NegociationBehaviour extends OneShotBehaviour {
                     logger.info("Order done.");
                     ((PersonalAgent) getAgent()).printStatus("Order registered!");
                     ((PersonalAgent) getAgent()).printStatus("Order is being prepared for shipping.");
-                    // Prepare for receive order
-                    // TODO
-                    //getAgent().addBehaviour();
+                    // Prepare for delivering
+                    getAgent().addBehaviour(new HandleDeliverBehaviour(getAgent()));
                 } else {
                     logger.error("Wrong message received.");
                 }
