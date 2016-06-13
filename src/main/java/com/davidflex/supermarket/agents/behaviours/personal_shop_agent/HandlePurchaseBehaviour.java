@@ -2,10 +2,10 @@ package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
 import com.davidflex.supermarket.agents.utils.ListHelper;
-import com.davidflex.supermarket.ontologies.company.elements.ConfirmPurchaseRequest;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Purchase;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseError;
+import com.davidflex.supermarket.ontologies.company.predicates.ConfirmPurchaseRequest;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.actions.Purchase;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.PurchaseError;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
@@ -33,7 +33,7 @@ import java.util.List;
  * @since   June 10, 2016
  * @author  Constantin MASSON
  */
-public class HandlePurchaseBehaviour extends OneShotBehaviour{
+class HandlePurchaseBehaviour extends OneShotBehaviour{
     private static final Logger logger = LoggerFactory.getLogger(HandlePurchaseBehaviour.class);
     private List<ConfirmPurchaseRequest> listWarhousesLoad; //Load set for each warehouse
 
@@ -168,7 +168,7 @@ public class HandlePurchaseBehaviour extends OneShotBehaviour{
         msg.setSender(getAgent().getAID());
         msg.addReceiver(buyer);
         msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
-        msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntology().getName());
+        msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntologyName());
         // Fill the content and send message
         Done d = new Done(new Action(getAgent().getAID(), new Purchase()));
         getAgent().getContentManager().fillContent(msg, d);
@@ -190,9 +190,12 @@ public class HandlePurchaseBehaviour extends OneShotBehaviour{
         MessageTemplate mt  = MessageTemplate.MatchSender(buyerAID);
         ACLMessage      msg = this.getAgent().blockingReceive(mt);
         ContentElement  ce  = getAgent().getContentManager().extractContent(msg);
-        if(ce instanceof Purchase){
-            Purchase response = (Purchase)ce;
-            return response.getItems(); //Can be empty if no items
+        if(ce instanceof Action){
+            Action a = (Action) ce;
+            if(a.getAction() instanceof Purchase) {
+                Purchase response = (Purchase) a.getAction();
+                return response.getItems(); //Can be empty if no items
+            }
         }
         return new ArrayList<>(); //In case of wrong message
     }
@@ -211,7 +214,7 @@ public class HandlePurchaseBehaviour extends OneShotBehaviour{
             msg.setSender(getAgent().getAID());
             msg.addReceiver(buyer);
             msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
-            msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntology().getName());
+            msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntologyName());
             // Fill the content and send the message
             PurchaseError errMsg = new PurchaseError(message);
             getAgent().getContentManager().fillContent(msg, errMsg);

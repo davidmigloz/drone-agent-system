@@ -1,11 +1,12 @@
 package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
-import com.davidflex.supermarket.ontologies.company.elements.AssignOrder;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRequest;
+import com.davidflex.supermarket.ontologies.company.actions.AssignOrder;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.PurchaseRequest;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -33,10 +34,10 @@ public class GetOrderBehaviour extends OneShotBehaviour {
             mt = MessageTemplate.MatchOntology(((PersonalShopAgent) getAgent()).getCompanyOntology().getName());
             ACLMessage msg = getAgent().blockingReceive(mt);
             ContentElement ce = getAgent().getContentManager().extractContent(msg);
-            if (ce instanceof AssignOrder) {
+            if (ce instanceof Action) {
                 logger.info("Order info received!");
                 // Get content
-                AssignOrder ao = (AssignOrder) ce;
+                AssignOrder ao = (AssignOrder) ((Action) ce).getAction();
                 // Save order and shopAgent
                 ((PersonalShopAgent) getAgent()).setShopAgent(msg.getSender());
                 ((PersonalShopAgent) getAgent()).setOrder(ao.getOrder());

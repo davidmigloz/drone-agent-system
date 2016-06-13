@@ -3,10 +3,11 @@ package com.davidflex.supermarket.agents.behaviours.personal_shop_agent;
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
 import com.davidflex.supermarket.agents.utils.ListHelper;
 import com.davidflex.supermarket.agents.utils.WarehousesComparator;
-import com.davidflex.supermarket.ontologies.company.elements.*;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseError;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.PurchaseRespond;
+import com.davidflex.supermarket.ontologies.company.concepts.*;
+import com.davidflex.supermarket.ontologies.company.predicates.*;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.PurchaseError;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.PurchaseRespond;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
@@ -33,10 +34,11 @@ import java.util.List;
  * @since   June 10, 2016
  * @author  Constantin MASSON
  */
-public class CheckOrderItemsBehaviour extends OneShotBehaviour{
+class CheckOrderItemsBehaviour extends OneShotBehaviour{
+
     private static final Logger logger = LoggerFactory.getLogger(CheckOrderItemsBehaviour.class);
 
-    public CheckOrderItemsBehaviour(Agent a) {
+    CheckOrderItemsBehaviour(Agent a) {
         super(a);
     }
 
@@ -212,7 +214,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
         msg.setSender(getAgent().getAID());
         msg.addReceiver(buyer);
         msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
-        msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntology().getName());
+        msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntologyName());
         // Fill the content and send the message
         PurchaseRespond respond = new PurchaseRespond(items);
         getAgent().getContentManager().fillContent(msg, respond);
@@ -233,7 +235,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
             msg.setSender(getAgent().getAID());
             msg.addReceiver(buyer);
             msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
-            msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntology().getName());
+            msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntologyName());
             // Fill the content and send the message
             PurchaseError errMsg = new PurchaseError(message);
             getAgent().getContentManager().fillContent(msg, errMsg);
@@ -278,7 +280,7 @@ public class CheckOrderItemsBehaviour extends OneShotBehaviour{
      *
      * @param received  Received list to test
      * @param expected  Expected list
-     * @return New list with missing elements
+     * @return New list with missing actions
      * @throws NullPointerException if received is null
      */
     private List<Item> checkMissingItems(List<Item> received, List<Item> expected){

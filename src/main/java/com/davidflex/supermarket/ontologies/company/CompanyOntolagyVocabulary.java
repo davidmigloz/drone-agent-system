@@ -1,5 +1,7 @@
 package com.davidflex.supermarket.ontologies.company;
 
-interface CompanyOntolagyVocabulary {
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
+
+public interface CompanyOntolagyVocabulary extends ShopOntologyVocabulary {
     String ONTOLOGY_NAME = "CompanyOntolagy";
 }

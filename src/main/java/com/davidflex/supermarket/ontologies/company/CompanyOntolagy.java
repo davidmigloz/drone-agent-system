@@ -1,6 +1,9 @@
 package com.davidflex.supermarket.ontologies.company;
 
-import com.davidflex.supermarket.ontologies.company.elements.Order;
+import com.davidflex.supermarket.ontologies.company.actions.AssignOrder;
+import com.davidflex.supermarket.ontologies.company.concepts.Order;
+import com.davidflex.supermarket.ontologies.company.predicates.InformPosition;
+import com.davidflex.supermarket.ontologies.shop.ShopOntology;
 import jade.content.onto.BeanOntology;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
@@ -14,9 +17,18 @@ public class CompanyOntolagy extends BeanOntology implements CompanyOntolagyVoca
     private static Ontology instance;
 
     private CompanyOntolagy() throws BeanOntologyException {
-        super(ONTOLOGY_NAME);
+        super(ONTOLOGY_NAME, ShopOntology.getInstance());
 
-        String pkgname = Order.class.getName();
+        // Add actions
+        String pkgname = AssignOrder.class.getName();
+        pkgname = pkgname.substring(0, pkgname.lastIndexOf("."));
+        add(pkgname);
+        // Add concepts
+        pkgname = Order.class.getName();
+        pkgname = pkgname.substring(0, pkgname.lastIndexOf("."));
+        add(pkgname);
+        // Add predicates
+        pkgname = InformPosition.class.getName();
         pkgname = pkgname.substring(0, pkgname.lastIndexOf("."));
         add(pkgname);
     }

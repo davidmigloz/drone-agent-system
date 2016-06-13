@@ -1,9 +1,9 @@
 package com.davidflex.supermarket.agents.behaviours.warehouse_agent;
 
 import com.davidflex.supermarket.agents.shop.WarehouseAgent;
-import com.davidflex.supermarket.ontologies.company.elements.Position;
-import com.davidflex.supermarket.ontologies.company.elements.RegisterWarehouse;
-import com.davidflex.supermarket.ontologies.company.elements.Warehouse;
+import com.davidflex.supermarket.ontologies.company.concepts.Position;
+import com.davidflex.supermarket.ontologies.company.actions.RegisterWarehouse;
+import com.davidflex.supermarket.ontologies.company.concepts.Warehouse;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;

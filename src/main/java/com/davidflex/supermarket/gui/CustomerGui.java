@@ -1,9 +1,9 @@
 package com.davidflex.supermarket.gui;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
 import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
-import com.davidflex.supermarket.ontologies.shop.paella.*;
-import com.davidflex.supermarket.ontologies.shop.wine.*;
+import com.davidflex.supermarket.ontologies.shop.concepts.paella.*;
+import com.davidflex.supermarket.ontologies.shop.concepts.wine.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -1,7 +1,7 @@
 package com.davidflex.supermarket.agents.utils;
 
-import com.davidflex.supermarket.ontologies.company.elements.Warehouse;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
+import com.davidflex.supermarket.ontologies.company.concepts.Warehouse;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 
 import java.util.Comparator;
 

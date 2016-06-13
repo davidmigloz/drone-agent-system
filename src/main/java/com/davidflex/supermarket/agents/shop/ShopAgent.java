@@ -6,11 +6,13 @@ import com.davidflex.supermarket.agents.behaviours.shop_agent.ShowDataBehaviour;
 import com.davidflex.supermarket.agents.utils.DFUtils;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
-import com.davidflex.supermarket.ontologies.company.elements.Position;
-import com.davidflex.supermarket.ontologies.company.elements.Warehouse;
+import com.davidflex.supermarket.ontologies.company.CompanyOntolagyVocabulary;
+import com.davidflex.supermarket.ontologies.company.concepts.Position;
+import com.davidflex.supermarket.ontologies.company.concepts.Warehouse;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 import com.davidflex.supermarket.ontologies.shop.ShopOntology;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
@@ -34,8 +36,7 @@ public class ShopAgent extends Agent {
     private static final Logger logger = LoggerFactory.getLogger(ShopAgent.class);
 
     private Codec codec;
-    private Ontology shopOntology;
-    private Ontology companyOntology;
+    private Ontology ontology;
     private ContainerController container;
 
     private List<Warehouse> warehouses;
@@ -47,8 +48,7 @@ public class ShopAgent extends Agent {
     public ShopAgent() {
         codec = new SLCodec(0); // fipa-sl0
         try {
-            shopOntology = ShopOntology.getInstance();
-            companyOntology = CompanyOntolagy.getInstance();
+            ontology = CompanyOntolagy.getInstance();
         } catch (BeanOntologyException e) {
             logger.error("Ontology error!", e);
             doDelete();
@@ -64,8 +64,8 @@ public class ShopAgent extends Agent {
     protected void setup() {
         // Setup content manager
         getContentManager().registerLanguage(codec);
-        getContentManager().registerOntology(shopOntology);
-        getContentManager().registerOntology(companyOntology);
+        getContentManager().registerOntology(ontology, ShopOntology.ONTOLOGY_NAME);
+        getContentManager().registerOntology(ontology, CompanyOntolagyVocabulary.ONTOLOGY_NAME);
         // Register in DF
         try {
             DFUtils.registerInDF(this, ECommerceOntologyVocabulary.SHOP_NAME,
@@ -86,7 +86,7 @@ public class ShopAgent extends Agent {
         // Add behaviours
         addBehaviour(new ListenNewOrdersBehaviour(this));
         addBehaviour(new ListenEmployeesBehaviour(this));
-        addBehaviour(new ShowDataBehaviour(this, 2000));
+        addBehaviour(new ShowDataBehaviour(this));
     }
 
     @Override
@@ -102,12 +102,12 @@ public class ShopAgent extends Agent {
         return codec;
     }
 
-    public Ontology getShopOntology() {
-        return shopOntology;
+    public String getShopOntologyName() {
+        return ShopOntologyVocabulary.ONTOLOGY_NAME;
     }
 
     public Ontology getCompanyOntology() {
-        return companyOntology;
+        return ontology;
     }
 
     public ContainerController getContainer() {
