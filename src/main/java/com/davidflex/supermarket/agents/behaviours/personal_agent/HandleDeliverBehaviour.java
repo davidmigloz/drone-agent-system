@@ -1,11 +1,13 @@
 package com.davidflex.supermarket.agents.behaviours.personal_agent;
 
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.DeliverRequest;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.DeliverRequest;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.DeliverResponse;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -43,12 +45,15 @@ class HandleDeliverBehaviour extends SimpleBehaviour {
     @Override
     public void action() {
         try {
+            // Get request
             ACLMessage msg = getAgent().blockingReceive(mt);
             ContentElement ce = getAgent().getContentManager().extractContent(msg);
             if (ce instanceof DeliverRequest) {
                 DeliverRequest dr = (DeliverRequest) ce;
                 updateStatus(dr.getItems());
             }
+            // Send response
+            sendResponse(msg.getSender());
         } catch (Codec.CodecException | OntologyException e) {
             logger.error("Error extracting msg.", e);
         }
@@ -87,5 +92,22 @@ class HandleDeliverBehaviour extends SimpleBehaviour {
                 logger.info("Wrong product received: " + name);
             }
         }
+    }
+
+    /**
+     * Sends DeliverResponse to drone agent.
+     */
+    private void sendResponse(AID drone)
+            throws Codec.CodecException, OntologyException {
+        // Prepare message
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        msg.setSender(getAgent().getAID());
+        msg.addReceiver(drone);
+        msg.setLanguage(((PersonalAgent) getAgent()).getCodec().getName());
+        msg.setOntology(((PersonalAgent) getAgent()).getOntology().getName());
+        // Fill the content and send the message
+        DeliverResponse respond = new DeliverResponse();
+        getAgent().getContentManager().fillContent(msg, respond);
+        getAgent().send(msg);
     }
 }

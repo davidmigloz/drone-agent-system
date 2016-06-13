@@ -1,7 +1,11 @@
 package com.davidflex.supermarket.agents.behaviours.personal_agent;
 
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.*;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.actions.*;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.PurchaseError;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.PurchaseRequest;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.PurchaseRespond;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;

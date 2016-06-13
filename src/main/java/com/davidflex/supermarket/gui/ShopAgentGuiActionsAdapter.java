@@ -1,7 +1,7 @@
 package com.davidflex.supermarket.gui;
 
-import com.davidflex.supermarket.ontologies.company.elements.Position;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
+import com.davidflex.supermarket.ontologies.company.concepts.Position;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 
 import java.util.List;
 

@@ -1,7 +1,11 @@
 package com.davidflex.supermarket.agents.behaviours.shop_agent;
 
 import com.davidflex.supermarket.agents.shop.ShopAgent;
-import com.davidflex.supermarket.ontologies.company.elements.*;
+import com.davidflex.supermarket.ontologies.company.actions.RegisterWarehouse;
+import com.davidflex.supermarket.ontologies.company.actions.UnregisterDrone;
+import com.davidflex.supermarket.ontologies.company.predicates.GetListWarehousesRequest;
+import com.davidflex.supermarket.ontologies.company.predicates.GetListWarehousesResponse;
+import com.davidflex.supermarket.ontologies.company.predicates.InformPosition;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;

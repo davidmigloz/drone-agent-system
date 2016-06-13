@@ -1,6 +1,6 @@
 package com.davidflex.supermarket.gui;
 
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -2,14 +2,15 @@ package com.davidflex.supermarket.agents.behaviours.shop_agent;
 
 import com.davidflex.supermarket.agents.shop.PersonalShopAgent;
 import com.davidflex.supermarket.agents.shop.ShopAgent;
-import com.davidflex.supermarket.ontologies.company.elements.AssignOrder;
-import com.davidflex.supermarket.ontologies.company.elements.Order;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.ContactRequest;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.ContactResponse;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
+import com.davidflex.supermarket.ontologies.company.actions.AssignOrder;
+import com.davidflex.supermarket.ontologies.company.concepts.Order;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.ContactRequest;
+import com.davidflex.supermarket.ontologies.ecommerce.predicates.ContactResponse;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
+import jade.content.onto.basic.Action;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
@@ -31,7 +32,7 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
 
     public ListenNewOrdersBehaviour(Agent a) {
         super(a);
-        mtOnto = MessageTemplate.MatchOntology(((ShopAgent) getAgent()).getShopOntology().getName());
+        mtOnto = MessageTemplate.MatchOntology(((ShopAgent) getAgent()).getShopOntologyName());
     }
 
     @Override
@@ -93,7 +94,8 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
             // Fill the content
             Order order = new Order(orderID, customer, location);
             AssignOrder request = new AssignOrder(order);
-            getAgent().getContentManager().fillContent(msg, request);
+            Action a = new Action(getAgent().getAID(), request);
+            getAgent().getContentManager().fillContent(msg, a);
             // Send message
             getAgent().send(msg);
         } catch (Codec.CodecException | OntologyException e) {
@@ -110,7 +112,7 @@ public class ListenNewOrdersBehaviour extends CyclicBehaviour {
             msg.setSender(getAgent().getAID());
             msg.addReceiver(customer);
             msg.setLanguage(((ShopAgent) getAgent()).getCodec().getName());
-            msg.setOntology(((ShopAgent) getAgent()).getShopOntology().getName());
+            msg.setOntology(((ShopAgent) getAgent()).getShopOntologyName());
             // Fill the content
             ContactResponse response = new ContactResponse(personalShopAgent);
             getAgent().getContentManager().fillContent(msg, response);

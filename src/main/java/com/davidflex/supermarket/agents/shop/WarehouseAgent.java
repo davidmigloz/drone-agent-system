@@ -21,6 +21,7 @@ import java.util.List;
 /**
  * WarehouseAgent.
  * A warehouse has a stock of items and a fleet of drones.
+ * Parameters: {shopAgent, coorX, coorY, [fleetSize]}
  *
  * @since   9 June, 2016
  * @author  Constantin MASSON
@@ -102,7 +103,7 @@ public class WarehouseAgent extends Agent {
         if(args.length == 4){
             this.fleetSize = Integer.parseInt((String)args[3]);
             if(this.fleetSize < FLEET_SIZE_MIN || this.fleetSize > FLEET_SIZE_MAX){
-                throw new Exception("Invalid parameters for WarehouseAgent");
+                throw new IllegalArgumentException("Invalid parameters for WarehouseAgent");
             }
         }
         logger.debug("Arg: {} {} {} {}", shopAgent, x, y, fleetSize);

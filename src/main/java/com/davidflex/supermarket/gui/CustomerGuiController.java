@@ -2,7 +2,7 @@ package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.agents.customer.PersonalAgent;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Item;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import jade.wrapper.StaleProxyException;

@@ -2,8 +2,8 @@ package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.agents.shop.ShopAgent;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
-import com.davidflex.supermarket.ontologies.company.elements.Position;
-import com.davidflex.supermarket.ontologies.ecommerce.elements.Location;
+import com.davidflex.supermarket.ontologies.company.concepts.Position;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
 import javafx.fxml.FXML;

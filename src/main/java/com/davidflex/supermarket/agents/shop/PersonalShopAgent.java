@@ -2,8 +2,10 @@ package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.agents.behaviours.personal_shop_agent.GetOrderBehaviour;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
-import com.davidflex.supermarket.ontologies.company.elements.Order;
+import com.davidflex.supermarket.ontologies.company.CompanyOntolagyVocabulary;
+import com.davidflex.supermarket.ontologies.company.concepts.Order;
 import com.davidflex.supermarket.ontologies.shop.ShopOntology;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
@@ -18,8 +20,7 @@ public class PersonalShopAgent extends Agent {
     private static final Logger logger = LoggerFactory.getLogger(PersonalShopAgent.class);
 
     private Codec codec;
-    private Ontology shopOntology;
-    private Ontology companyOntology;
+    private Ontology ontology;
 
     private AID shopAgent;
     private Order order;
@@ -27,8 +28,7 @@ public class PersonalShopAgent extends Agent {
     public PersonalShopAgent() {
         codec = new SLCodec(0); // fipa-sl0
         try {
-            shopOntology = ShopOntology.getInstance();
-            companyOntology = CompanyOntolagy.getInstance();
+            ontology = CompanyOntolagy.getInstance();
         } catch (BeanOntologyException e) {
             logger.error("Ontology error!", e);
             doDelete();
@@ -39,8 +39,8 @@ public class PersonalShopAgent extends Agent {
     protected void setup() {
         // Setup content manager
         getContentManager().registerLanguage(codec);
-        getContentManager().registerOntology(shopOntology);
-        getContentManager().registerOntology(companyOntology);
+        getContentManager().registerOntology(ontology, ShopOntology.ONTOLOGY_NAME);
+        getContentManager().registerOntology(ontology, CompanyOntolagyVocabulary.ONTOLOGY_NAME);
         // Add behaviours
         addBehaviour(new GetOrderBehaviour(this));
     }
@@ -49,12 +49,12 @@ public class PersonalShopAgent extends Agent {
         return codec;
     }
 
-    public Ontology getShopOntology() {
-        return shopOntology;
+    public String getShopOntologyName() {
+        return ShopOntologyVocabulary.ONTOLOGY_NAME;
     }
 
     public Ontology getCompanyOntology() {
-        return companyOntology;
+        return ontology;
     }
 
     public AID getShopAgent() {
