@@ -2,7 +2,6 @@ package com.davidflex.supermarket.gui;
 
 import com.davidflex.supermarket.agents.shop.ShopAgent;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
-import com.davidflex.supermarket.ontologies.company.concepts.Position;
 import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 import jade.wrapper.AgentController;
 import jade.wrapper.StaleProxyException;
@@ -62,16 +61,16 @@ public class ShopAgentGuiController implements ShopAgentGuiActions {
     }
 
     @Override
-    public void updateInfo(List<Position> warehouses, List<Position> drones, List<Location> customers) {
+    public void updateInfo(List<Location> warehouses, List<Location> drones, List<Location> customers) {
         clearCanvas();
         // Warehouses
         this.warehouses.setText(warehouses.size() + "");
-        for(Position w : warehouses) {
+        for(Location w : warehouses) {
             drawImage(w.getX(), w.getY(), warehouseImg);
         }
         // Drones
         this.drones.setText(drones.size() + "");
-        for(Position d : drones) {
+        for(Location d : drones) {
             drawImage(d.getX(), d.getY(), droneImg);
         }
         // Customers

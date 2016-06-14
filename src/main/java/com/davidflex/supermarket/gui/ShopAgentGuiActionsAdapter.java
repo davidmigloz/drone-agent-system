@@ -1,6 +1,5 @@
 package com.davidflex.supermarket.gui;
 
-import com.davidflex.supermarket.ontologies.company.concepts.Position;
 import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class ShopAgentGuiActionsAdapter {
         ShopAgentGuiActionsAdapter.instance = instance;
     }
 
-    public static void actionUpdateInfo (List<Position> warehouses, List<Position> drones,
+    public static void actionUpdateInfo (List<Location> warehouses, List<Location> drones,
                                     List<Location> customers) {
         if(instance != null) {
             instance.updateInfo(warehouses, drones, customers);

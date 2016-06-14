@@ -2,7 +2,6 @@ package com.davidflex.supermarket.agents.behaviours.shop_agent;
 
 import com.davidflex.supermarket.agents.shop.ShopAgent;
 import com.davidflex.supermarket.gui.ShopAgentGuiActionsAdapter;
-import com.davidflex.supermarket.ontologies.company.concepts.Position;
 import com.davidflex.supermarket.ontologies.company.concepts.Warehouse;
 import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 import jade.core.Agent;
@@ -23,8 +22,8 @@ public class ShowDataBehaviour extends TickerBehaviour {
     private static final Logger logger = LoggerFactory.getLogger(ShowDataBehaviour.class);
     private static final int REFRESH_PERIOD = 2000;
 
-    private List<Position> warehouses;
-    private List<Position> drones;
+    private List<Location> warehouses;
+    private List<Location> drones;
     private List<Location> customers;
 
     public ShowDataBehaviour(Agent a) {

@@ -1,5 +1,6 @@
 package com.davidflex.supermarket.ontologies.company.concepts;
 
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 import jade.content.Concept;
 import jade.core.AID;
 
@@ -10,12 +11,12 @@ import jade.core.AID;
 public class Warehouse implements Concept {
 
     private AID warehouseAgent;
-    private Position location;
+    private Location location;
 
     public Warehouse() {
     }
 
-    public Warehouse(AID warehouseAgent, Position location) {
+    public Warehouse(AID warehouseAgent, Location location) {
         this.warehouseAgent = warehouseAgent;
         this.location = location;
     }
@@ -28,11 +29,11 @@ public class Warehouse implements Concept {
         this.warehouseAgent = warehouseAgent;
     }
 
-    public Position getLocation() {
+    public Location getLocation() {
         return location;
     }
 
-    public void setLocation(Position location) {
+    public void setLocation(Location location) {
         this.location = location;
     }
 }
