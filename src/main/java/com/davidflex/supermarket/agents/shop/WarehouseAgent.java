@@ -48,6 +48,7 @@ public class WarehouseAgent extends Agent {
     private int         fleetSize;
     private List<AID>   fleet;
     private List<Item>  stock; //List of items in stock (Item got its quantity)
+    //TODO update (Important): add stock management
 
 
     // *************************************************************************

@@ -60,7 +60,7 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
 
 
     // *************************************************************************
-    // Send functions
+    // Send / Receive functions
     // *************************************************************************
 
     /**
@@ -88,6 +88,8 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
             block();
             return null;
         }
+
+        //Process content if message received
         ContentElement ce = this.getAgent().getContentManager().extractContent(msg);
         //Message should be CheckStockItemsRequest
         if(!(ce instanceof CheckStockItemsRequest)){
