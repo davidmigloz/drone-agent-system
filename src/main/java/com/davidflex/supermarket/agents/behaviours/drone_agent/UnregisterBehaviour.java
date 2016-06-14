@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Unregister drone from shopAgent (to not appear in the map anymore).
+ * And set order as completed.
  * Used by droneAgent.
  */
 class UnregisterBehaviour extends OneShotBehaviour {

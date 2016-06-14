@@ -49,7 +49,6 @@ public class DroneAgent extends Agent {
         getContentManager().registerOntology(ontology, CompanyOntolagyVocabulary.ONTOLOGY_NAME);
         // Add behaviours
 
-
     }
 
     public Codec getCodec() {

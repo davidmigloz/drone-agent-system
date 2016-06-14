@@ -49,6 +49,7 @@ class DeliverOrderBehaviour extends SimpleBehaviour {
                 if(msg != null) {
                     // Response received -> order completed -> comeback warehouse
                     logger.info("Deliver response rececived!");
+                    getOrder().setDelivered(true);
                     manager.restart();
                     step++;
                 } else {
