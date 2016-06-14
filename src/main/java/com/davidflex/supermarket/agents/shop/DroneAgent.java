@@ -1,9 +1,12 @@
 package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
+import com.davidflex.supermarket.ontologies.company.CompanyOntolagyVocabulary;
 import com.davidflex.supermarket.ontologies.company.concepts.Order;
 import com.davidflex.supermarket.ontologies.company.concepts.Warehouse;
 import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
+import com.davidflex.supermarket.ontologies.shop.ShopOntology;
+import com.davidflex.supermarket.ontologies.shop.ShopOntologyVocabulary;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
@@ -42,14 +45,19 @@ public class DroneAgent extends Agent {
     protected void setup() {
         // Setup content manager
         getContentManager().registerLanguage(codec);
-        getContentManager().registerOntology(ontology);
+        getContentManager().registerOntology(ontology, ShopOntology.ONTOLOGY_NAME);
+        getContentManager().registerOntology(ontology, CompanyOntolagyVocabulary.ONTOLOGY_NAME);
     }
 
     public Codec getCodec() {
         return codec;
     }
 
-    public Ontology getOntology() {
+    public String getShopOntologyName() {
+        return ShopOntologyVocabulary.ONTOLOGY_NAME;
+    }
+
+    public Ontology getCompanyOntology() {
         return ontology;
     }
 
