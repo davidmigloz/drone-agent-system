@@ -7,7 +7,6 @@ import com.davidflex.supermarket.agents.utils.DFUtils;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagyVocabulary;
-import com.davidflex.supermarket.ontologies.company.concepts.Position;
 import com.davidflex.supermarket.ontologies.company.concepts.Warehouse;
 import com.davidflex.supermarket.ontologies.ecommerce.ECommerceOntologyVocabulary;
 import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
@@ -42,7 +41,7 @@ public class ShopAgent extends Agent {
     private List<Warehouse> warehouses;
     private AtomicLong orderIDs;
     private Map<Long, Location> activeOrders;
-    private Map<AID, Position> drones;
+    private Map<AID, Location> drones;
 
 
     public ShopAgent() {
@@ -138,7 +137,7 @@ public class ShopAgent extends Agent {
         return warehouses;
     }
 
-    public void setDronePosition(AID drone, Position position){
+    public void setDronePosition(AID drone, Location position){
         drones.put(drone, position);
     }
 
@@ -146,7 +145,7 @@ public class ShopAgent extends Agent {
         drones.remove(drone);
     }
 
-    public Map<AID, Position> getDrones() {
+    public Map<AID, Location> getDrones() {
         return drones;
     }
 }

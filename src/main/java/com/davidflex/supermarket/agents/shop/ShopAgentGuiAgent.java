@@ -8,7 +8,7 @@ import javafx.application.Application;
  * Agent for shopAgent GUI.
  */
 @SuppressWarnings("unused")
-public class ShopAgentGuiAgent extends Agent {
+    public class ShopAgentGuiAgent extends Agent {
 
     @Override
     protected void setup() {

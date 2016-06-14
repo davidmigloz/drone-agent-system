@@ -12,14 +12,17 @@ public class Order implements Concept {
     private AID buyer;
     private Location location;
     private List<Item> items;
+    private boolean delivered;
 
     public Order() {
+        this.delivered = false;
     }
 
     public Order(long id, AID buyer, Location location) {
         this.id = id;
         this.buyer = buyer;
         this.location = location;
+        this.delivered = false;
     }
 
     public long getId() {
@@ -52,5 +55,13 @@ public class Order implements Concept {
 
     public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    public boolean isDelivered() {
+        return delivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        this.delivered = delivered;
     }
 }

@@ -51,7 +51,7 @@ class NegociationBehaviour extends OneShotBehaviour {
 
         // Get reply and check availability and prices
         try {
-            logger.info("Waiting afor reply...");
+            logger.info("Waiting for reply...");
             ACLMessage msg = getAgent().blockingReceive(mt);
             ContentElement ce = getAgent().getContentManager().extractContent(msg);
             if (ce instanceof PurchaseRespond) {
