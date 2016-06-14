@@ -25,9 +25,9 @@ public class DroneAgent extends Agent {
     private Ontology ontology;
 
     // Attributes drone
+    private Location position;
     private Warehouse warehouse;
     private AID shopAgent;
-    private Location position;
     private Order order;
 
 
