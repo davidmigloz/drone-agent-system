@@ -143,7 +143,7 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
      *
      * @param warehouseList List of warehouse where to check for products
      * @param items         List of items to request
-     * @return The list of ConfirmPurchaseRequest
+     * @return              The list of ConfirmPurchaseRequest
      */
     private List<ConfirmPurchaseRequest> requestToWarehouses(
             List<Warehouse> warehouseList, List<Item> items)
