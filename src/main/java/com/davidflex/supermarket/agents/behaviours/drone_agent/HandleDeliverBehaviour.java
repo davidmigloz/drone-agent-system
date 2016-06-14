@@ -20,11 +20,15 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
 
     private int step;
     private Location target;
+    private Behaviour informPositionBehaviour;
 
-    public HandleDeliverBehaviour(Agent a, Location target) {
+    public HandleDeliverBehaviour(Agent a) {
         super(a);
-        this.target = target;
         step = 0;
+        this.target = getOrder().getLocation();
+        // Inform position periodically
+        informPositionBehaviour = new InformPositionBehaviour(getAgent());
+        getAgent().addBehaviour(informPositionBehaviour);
     }
 
     @Override
@@ -66,6 +70,7 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
     public boolean done() {
         if(step > 3) {
             // Drone in warehouse -> Unregister from shopAgent
+            getAgent().removeBehaviour(informPositionBehaviour);
             getAgent().addBehaviour(new UnregisterBehaviour());
             return true;
         }
