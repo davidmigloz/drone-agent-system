@@ -78,9 +78,10 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
         //Request the warehouse for the availability of items (Starting by closest)
         logger.info("Send request to warehouses (Starting by closest)");
         List<Item> requested = ((PersonalShopAgent)getAgent()).getOrder().getItems();
-        List<ConfirmPurchaseRequest> listConfirm;
+        List<ConfirmPurchaseRequest> listConfirm; //The future response list
         try {
             listConfirm = this.requestToWarehouses(warehouses, requested);
+            logger.info("Availability from warehouses received successfully.");
         } catch (Codec.CodecException | OntologyException ex) {
             logger.error("Unable to send request to warehouse.", ex);
             this.sendPurchaseErrorToCustomer(
@@ -154,6 +155,7 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
         //Browse each warehouse for item availability and price.
         for(Warehouse w: warehouseList){
             this.sendListToWarehouse(w.getWarehouseAgent(), remaining);
+            //TODO Update: possibly add timeout (atm, if error, will wait infinitely)
             received = this.blockReceiveListFromWarehouse(w.getWarehouseAgent());
 
             //If this warehouse can't handle any items, switch to next.

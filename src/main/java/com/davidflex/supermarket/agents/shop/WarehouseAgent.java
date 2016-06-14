@@ -1,9 +1,11 @@
 package com.davidflex.supermarket.agents.shop;
 
+import com.davidflex.supermarket.agents.behaviours.warehouse_agent.ListenCheckStockRequest;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.RegisterBehaviour;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.SetupFleetBehavior;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
@@ -45,6 +47,7 @@ public class WarehouseAgent extends Agent {
     private int         y;
     private int         fleetSize;
     private List<AID>   fleet;
+    private List<Item>  stock; //List of items in stock (Item got its quantity)
 
 
     // *************************************************************************
@@ -82,6 +85,7 @@ public class WarehouseAgent extends Agent {
         // Register in ShopAgent
         this.addBehaviour(new RegisterBehaviour(this, shopAgent));
         this.addBehaviour(new SetupFleetBehavior(this));
+        this.addBehaviour(new ListenCheckStockRequest(this));
     }
 
     /**
