@@ -21,13 +21,15 @@ class UnregisterBehaviour extends OneShotBehaviour {
     @Override
     public void action() {
         try {
+            logger.info("Unregistering from shopAgent...");
             ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
             msg.setSender(getAgent().getAID());
             msg.addReceiver(((DroneAgent) getAgent()).getShopAgent());
             msg.setLanguage(((DroneAgent) getAgent()).getCodec().getName());
-            msg.setOntology(((DroneAgent) getAgent()).getOntology().getName());
+            msg.setOntology(((DroneAgent) getAgent()).getCompanyOntology().getName());
             // Fill the content
-            UnregisterDrone ud = new UnregisterDrone(getAgent().getAID());
+            Long orderID = ((DroneAgent) getAgent()).getOrder().getId();
+            UnregisterDrone ud = new UnregisterDrone(getAgent().getAID(), orderID);
             Action a = new Action(getAgent().getAID(), ud);
             getAgent().getContentManager().fillContent(msg, a);
             // Send message

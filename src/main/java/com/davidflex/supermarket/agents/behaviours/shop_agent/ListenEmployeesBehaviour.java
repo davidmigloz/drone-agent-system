@@ -52,7 +52,10 @@ public class ListenEmployeesBehaviour extends CyclicBehaviour {
                         // Unregistering drone
                         logger.info("Unregistering drone: " + msg.getSender().getLocalName());
                         UnregisterDrone ud = (UnregisterDrone) a.getAction();
+                        // Remove drone
                         ((ShopAgent) getAgent()).unregisterDrone(ud.getDrone());
+                        // Remove order
+                        ((ShopAgent) getAgent()).getActiveOrders().remove(ud.getOrderId());
                     }
                 } else if (ce instanceof GetListWarehousesRequest) {
                     // Send list of warehouses
