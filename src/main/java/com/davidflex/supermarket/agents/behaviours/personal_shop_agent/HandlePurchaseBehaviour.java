@@ -35,7 +35,7 @@ import java.util.List;
  */
 class HandlePurchaseBehaviour extends OneShotBehaviour{
     private static final Logger logger = LoggerFactory.getLogger(HandlePurchaseBehaviour.class);
-    private List<ConfirmPurchaseRequest> listWarhousesLoad; //Load set for each warehouse
+    private List<ConfirmPurchaseRequest> listWarehousesLoad; //Load set for each warehouse
 
     /**
      * Create and start the HandlePurchaseBehavior.
@@ -45,7 +45,7 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
      */
     HandlePurchaseBehaviour(Agent a, List<ConfirmPurchaseRequest> list) {
         super(a);
-        this.listWarhousesLoad = list;
+        this.listWarehousesLoad = list;
     }
 
 
@@ -59,17 +59,21 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
 
         try {
             //Recover the list from customer and update the list of purchase
+            logger.info("Wait customer's list with items he actually wants to buy");
             List<Item> listItems = this.blockReceivePurchaseResponse(buyerAID);
+            logger.info("List from customer received. Update load warehouses");
             this.updateListPurchases(listItems);
+            logger.info("Warehouses load updated.");
 
             //Send to each warehouse its load
-            for(ConfirmPurchaseRequest load : this.listWarhousesLoad){
+            logger.info("Send ConfirmPurchaseRequest to each warehouse.");
+            for(ConfirmPurchaseRequest load : this.listWarehousesLoad){
                 this.sendListToWarehouse(load.getWarehouse().getWarehouseAgent(), load);
             }
 
-            //TODO we could wait for a confirmation from warehouse.
-
             //Send done confirmation to buyer
+            //TODO we could wait for a confirmation from warehouse.
+            logger.info("Send 'done' to customer.");
             this.sendDone(buyerAID);
         }
         catch (Codec.CodecException | OntologyException ex) {
@@ -101,7 +105,7 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
         int index, iQ, wQ;
 
         //Browse each warehouse load.
-        for(ConfirmPurchaseRequest load : this.listWarhousesLoad){
+        for(ConfirmPurchaseRequest load : this.listWarehousesLoad){
             //Compare warehouse list of item with customer list.
             for(Item item : listItems){
                 //Skipp if this item has already been assigned.
@@ -145,7 +149,7 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
     private void sendListToWarehouse(AID warehouse, ConfirmPurchaseRequest purchaseRequest)
             throws Codec.CodecException, OntologyException {
         //Create message
-        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        ACLMessage msg = new ACLMessage(ACLMessage.CONFIRM);
         msg.setSender(getAgent().getAID());
         msg.addReceiver(warehouse);
         msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
