@@ -77,6 +77,13 @@ class NegociationBehaviour extends OneShotBehaviour {
             return;
         }
 
+        // Check final list
+        if(finalItemList.size() == 0) {
+            logger.info("No items to buy");
+            ((PersonalAgent) getAgent()).cancelOrder("No items to buy.");
+            return;
+        }
+
         // Send purchase message with the final order
         logger.info("Sending order to " + personalShopAgent.getLocalName());
         ((PersonalAgent) getAgent()).printStatus("Sending order to " + personalShopAgent.getLocalName() + "...");

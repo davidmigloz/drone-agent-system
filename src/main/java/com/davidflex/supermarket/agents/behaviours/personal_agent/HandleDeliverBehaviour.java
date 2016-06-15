@@ -83,9 +83,11 @@ class HandleDeliverBehaviour extends SimpleBehaviour {
                 // Update quantity to receive
                 Integer quantityToReceive = quantity - receivedQuantity;
                 if(quantityToReceive > 0) {
+                    logger.debug(quantity + " " + name + " received!. Missing: " + quantityToReceive);
                     ((PersonalAgent) getAgent()).updateItemStatus(name, quantity + " received...");
                     orderItems.put(name, quantityToReceive);
                 } else {
+                    logger.debug(quantity + " " + name + " received! Completed!");
                     ((PersonalAgent) getAgent()).updateItemStatus(name, "Completed!");
                     orderItems.remove(name);
                 }
