@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A drone flyes to their target.
+ * A drone flies to their target.
  * Used by droneAgent.
  */
 class FlyingBehaviour extends TickerBehaviour {

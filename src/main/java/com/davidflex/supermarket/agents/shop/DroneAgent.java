@@ -94,10 +94,12 @@ public class DroneAgent extends Agent {
         int y = Integer.parseInt((String) args[3]);
 
         //Set drone values
-        Location location   = new Location(x, y);
-        this.shopAgent      = new AID(shopAgentName, AID.ISLOCALNAME);
-        this.warehouse      = new Warehouse(new AID(warehouseName, AID.ISLOCALNAME), location);
-        this.position       = location;
+        Location dronePos       = new Location(x, y);
+        Location warehousePos   = new Location(x, y);
+        AID warehouseAID        = new AID(warehouseName, AID.ISLOCALNAME);
+        this.shopAgent          = new AID(shopAgentName, AID.ISLOCALNAME);
+        this.warehouse          = new Warehouse(warehouseAID, warehousePos);
+        this.position           = dronePos;
 
         logger.debug("Drone successfully created from parameters");
     }

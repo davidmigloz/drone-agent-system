@@ -10,6 +10,7 @@ import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -17,11 +18,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handle the deliver of an order by the drone (flying to customer's location, deliver order and
- * comeback to warehouse).
+ * Handle the deliver of an order by the drone
+ * (Flying to customer's location, deliver order and comeback to warehouse).
+ *
  * Used by droneAgent.
  */
-public class HandleDeliverBehaviour extends SimpleBehaviour {
+public class HandleDeliverBehaviour extends CyclicBehaviour {
 
     private static final Logger logger = LoggerFactory.getLogger(HandleDeliverBehaviour.class);
 
@@ -39,7 +41,7 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
     public void action() {
         switch (step) {
             case 0:
-                //Assign order
+                //Assign order (Drone in the warehouse)
                 logger.info("Wait for an order...");
                 try {
                     this.blockReceiveReceiveOrderMessage();
@@ -52,11 +54,12 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
                 step++;
                 break;
             case 1:
-                // Fly to taget
+                // Fly to target
                 logger.info("Flying to target " + getOrder().getLocation());
                 getAgent().addBehaviour(informPositionBehaviour);
-                getAgent().addBehaviour(new FlyingBehaviour(getAgent(), this,
-                        getOrder().getLocation()));
+                getAgent().addBehaviour(
+                        new FlyingBehaviour(getAgent(), this, getOrder().getLocation())
+                );
                 step++;
                 block();
                 break;
@@ -78,29 +81,23 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
             case 4:
                 // Comeback to warehouse
                 logger.info("Flying to warehouse " + getWarehouseLocation());
-                getAgent().addBehaviour(new FlyingBehaviour(getAgent(), this, getWarehouseLocation()));
+                getAgent().addBehaviour(
+                        new FlyingBehaviour(getAgent(), this, getWarehouseLocation())
+                );
                 step++;
                 block();
                 break;
             case 5:
-                // Check that it arrives
-                if (!getActualPosition().equals(getWarehouseLocation())) {
-                    block();
-                } else {
-                    step++;
-                }
+                //Deregister the drone
+                getAgent().addBehaviour(new UnregisterBehaviour());
+                step++;
+                break;
+            case 6:
+                //Remove the inform position behavior and reset drone state
+                getAgent().removeBehaviour(informPositionBehaviour);
+                step = 0;
+                break;
         }
-    }
-
-    @Override
-    public boolean done() {
-        if (step > 5) {
-            // Drone in warehouse -> Unregister from shopAgent
-            getAgent().removeBehaviour(informPositionBehaviour);
-            getAgent().addBehaviour(new UnregisterBehaviour());
-            step = 0;
-        }
-        return false;
     }
 
     /**
