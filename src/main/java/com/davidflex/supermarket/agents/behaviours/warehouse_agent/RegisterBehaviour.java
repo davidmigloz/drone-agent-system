@@ -27,9 +27,9 @@ public class RegisterBehaviour extends OneShotBehaviour {
 
     private AID shopAgent;
 
-    public RegisterBehaviour(Agent a, String shopAgent) {
+    public RegisterBehaviour(Agent a, AID shopAgent) {
         super(a);
-        this.shopAgent = new AID(shopAgent, AID.ISLOCALNAME);
+        this.shopAgent = shopAgent;
     }
 
     @Override
@@ -44,8 +44,12 @@ public class RegisterBehaviour extends OneShotBehaviour {
             msg.setLanguage(((WarehouseAgent) getAgent()).getCodec().getName());
             msg.setOntology(((WarehouseAgent) getAgent()).getOntology().getName());
             // Fill the content
-            Warehouse w = new Warehouse(getAgent().getAID(),
-                    new Location(((WarehouseAgent) getAgent()).getX(), ((WarehouseAgent) getAgent()).getY()));
+            Warehouse w = new Warehouse(
+                    getAgent().getAID(),
+                    new Location(
+                            ((WarehouseAgent) getAgent()).getLocation().getX(),
+                            ((WarehouseAgent) getAgent()).getLocation().getY())
+            );
             RegisterWarehouse request = new RegisterWarehouse(w);
             Action a = new Action(getAgent().getAID(), request);
             getAgent().getContentManager().fillContent(msg, a);

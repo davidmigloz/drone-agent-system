@@ -3,15 +3,14 @@ package com.davidflex.supermarket.agents.shop;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.ListenCheckStockRequest;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.RegisterBehaviour;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.SetupFleetBehavior;
-import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
+import com.davidflex.supermarket.ontologies.ecommerce.concepts.Location;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
 import jade.content.onto.Ontology;
 import jade.core.AID;
 import jade.core.Agent;
-import jade.wrapper.ContainerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +38,12 @@ public class WarehouseAgent extends Agent {
     //Attributes Jade
     private Codec               codec;
     private Ontology            ontology;
-    private ContainerController container;
 
     //Warehouse Attributes
-    private int                 x;
-    private int                 y;
+    private Location            location;
     private int                 fleetSize;
     private Map<AID, Boolean>   fleet;
+    private AID                 shopAgent;
     //TODO update (Important): add stock management
 
 
@@ -68,21 +66,19 @@ public class WarehouseAgent extends Agent {
         // Setup content manager
         getContentManager().registerLanguage(codec);
         getContentManager().registerOntology(ontology);
-        String shopAgent = null;
         try {
             // Get arguments (order number, coordX, coordY, [drones])
-            Object[] args = getArguments();
-            shopAgent = this.processParameters(args);
+            Object[] args           = getArguments();
+            String shopAgentName    = this.processParameters(args);
+            this.shopAgent          = new AID(shopAgentName, AID.ISLOCALNAME);
         } catch (Exception e) {
             logger.error("Unable to start agent: "+getLocalName()+
                     "\nUsage: shopName, x, y, [drones]" +
                     "\nDrones value between "+FLEET_SIZE_MIN+" and "+FLEET_SIZE_MAX);
             doDelete();
         }
-        //Create the container for this warehouse
-        this.container = JadeUtils.createContainer("warehouse-"+x+"-"+y);
         // Register in ShopAgent
-        this.addBehaviour(new RegisterBehaviour(this, shopAgent));
+        this.addBehaviour(new RegisterBehaviour(this, this.shopAgent));
         this.addBehaviour(new SetupFleetBehavior(this));
         this.addBehaviour(new ListenCheckStockRequest(this));
     }
@@ -91,17 +87,18 @@ public class WarehouseAgent extends Agent {
      * Process the given parameters and return the ShopAgent name.
      *
      * @param args          Array of parameters
-     * @return              The ShopAgent name
+     * @return              The ShopAgent name (string)
      * @throws Exception    If invalid parameters
      */
     private String processParameters(Object[] args) throws Exception {
         if(args == null || (args.length != 3 && args.length != 4)){
             throw new Exception("Invalid parameters for WarehouseAgent");
         }
-        String shopAgent = (String) args[0];
+        String shopAgentName = (String) args[0];
         //TODO update: att test x,y value integrity (Is on the map etc)
-        this.x = Integer.parseInt((String) args[1]);
-        this.y = Integer.parseInt((String) args[2]);
+        int x = Integer.parseInt((String) args[1]);
+        int y = Integer.parseInt((String) args[2]);
+        this.location = new Location(x, y);
         this.fleetSize = FLEET_SIZE_DEFAULT;
         if(args.length == 4){
             this.fleetSize = Integer.parseInt((String)args[3]);
@@ -109,8 +106,8 @@ public class WarehouseAgent extends Agent {
                 throw new IllegalArgumentException("Invalid parameters for WarehouseAgent");
             }
         }
-        logger.debug("Arg: {} {} {} {}", shopAgent, x, y, fleetSize);
-        return shopAgent;
+        logger.debug("Arg: {} {} {} {}", shopAgentName, x, y, fleetSize);
+        return shopAgentName;
     }
 
 
@@ -125,12 +122,8 @@ public class WarehouseAgent extends Agent {
         return ontology;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public Location getLocation(){
+        return this.location;
     }
 
     public int getFleetSize(){
@@ -141,7 +134,7 @@ public class WarehouseAgent extends Agent {
         return this.fleet;
     }
 
-    public ContainerController getContainer(){
-        return this.container;
+    public AID getShopAgent(){
+        return this.shopAgent;
     }
 }
