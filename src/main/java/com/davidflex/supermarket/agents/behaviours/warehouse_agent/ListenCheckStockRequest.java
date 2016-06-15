@@ -46,17 +46,20 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
         try {
             //receive list from personal shop agent
             requestedItems = this.receiveCheckStockRequest();
-            //If null, means no msg received and behavior blocked. (Must quit now)
+            //If null, means no msg received and behavior must block and quit
             if(requestedItems == null){
+                block();
                 return;
             }
+
             //Here, means list has actually been received. process it
             logger.info("List received from personal shop agent. Start processing it.");
             wItems = this.processReceivedList(requestedItems);
+            logger.info("List has been updated according to available stocks.");
 
             //Send back the response
-            logger.info("Response list has been created and is sent back.");
             this.sendListResponse(wItems);
+            logger.info("Response list has been sent back.");
         } catch (Exception ex) {
             logger.error("Unable to process the message", ex);
         }
@@ -81,15 +84,9 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
      */
     private List<Item> receiveCheckStockRequest() throws Exception {
         //Message should be a request with valid ontology
-        MessageTemplate mt = MessageTemplate.and(
-                MessageTemplate.MatchPerformative(ACLMessage.REQUEST),
-                MessageTemplate.MatchOntology(
-                        ((WarehouseAgent)getAgent()).getOntology().getName()
-                )
-        );
+        MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
         ACLMessage msg = this.getAgent().receive(mt);
         if(msg == null){
-            block();
             return null;
         }
 
@@ -109,7 +106,7 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
     /**
      * Send the response list to the personalShopAgent that asked the list.
      *
-     * @param responseList  Response list
+     * @param responseList          Response list
      * @throws Codec.CodecException If unable to create the message
      * @throws OntologyException    If unable to create the message
      */
@@ -141,6 +138,9 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
      */
     private List<Item> processReceivedList(List<Item> received){
         //TODO Update: add actual lock process.
+        for(Item i : received){
+            i.setPrice(42);//TODO Update: atm, all items cost 42
+        }
         //Atm, the warehouse will always be able to handle all the requested items.
         return received; //TODO Critique: to do
     }

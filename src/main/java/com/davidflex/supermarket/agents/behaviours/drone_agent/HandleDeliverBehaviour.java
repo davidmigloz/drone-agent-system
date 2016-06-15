@@ -85,10 +85,8 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
             case 5:
                 // Check that it arrives
                 if (!getActualPosition().equals(getWarehouseLocation())) {
-                    logger.info("Check that it arrives (IN BLOCK)");
                     block();
                 } else {
-                    logger.info("Check that it arrives (QRRIVED)");
                     step++;
                 }
         }

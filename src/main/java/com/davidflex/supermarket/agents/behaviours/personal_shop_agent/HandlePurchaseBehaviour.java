@@ -62,7 +62,7 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
             logger.info("Wait customer's list with items he actually wants to buy");
             List<Item> listItems = this.blockReceivePurchaseResponse(buyerAID);
             logger.info("List from customer received. Update load warehouses");
-            this.updateListPurchases(listItems);
+            this.updateWarehousesLoad(listItems);
             logger.info("Warehouses load updated.");
 
             //Send to each warehouse its load
@@ -72,7 +72,7 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
             }
 
             //Send done confirmation to buyer
-            //TODO Update: confirmation from warehouse.
+            //TODO Update: wait for confirmation from warehouse and sent to customer.
             logger.info("Send 'done' to customer.");
             this.sendDone(buyerAID); //TODO TO change with update
         }
@@ -101,7 +101,7 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
      *
      * @param listItems List of items user actually wants to buy
      */
-    private void updateListPurchases(List<Item> listItems){
+    private void updateWarehousesLoad(List<Item> listItems){
         int index, iQ, wQ;
 
         //Browse each warehouse load.
