@@ -11,7 +11,6 @@ import jade.content.onto.basic.Action;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
-import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import org.slf4j.Logger;
@@ -138,13 +137,6 @@ public class HandleDeliverBehaviour extends CyclicBehaviour {
      */
     private Location getWarehouseLocation() {
         return ((DroneAgent) getAgent()).getWarehouse().getLocation();
-    }
-
-    /**
-     * Get actual position.
-     */
-    private Location getActualPosition() {
-        return ((DroneAgent) getAgent()).getPosition();
     }
 
     /**

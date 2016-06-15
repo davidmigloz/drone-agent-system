@@ -127,9 +127,11 @@ public class PersonalAgent extends Agent {
     }
 
     public void updateItemStatus(String item, String status) {
-        for(Item i : items) {
-            if(i.getClass().getSimpleName().equals(item)) {
-                i.setStatus(status);
+        for (int i = 0; i < items.size(); i++) {
+            if(items.get(i).getClass().getSimpleName().equalsIgnoreCase(item)) {
+                Item it = items.get(i);
+                it.setStatus(status);
+                items.set(i,it);
                 break;
             }
         }

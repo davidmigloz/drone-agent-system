@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class ShowDataBehaviour extends TickerBehaviour {
 
     private static final Logger logger = LoggerFactory.getLogger(ShowDataBehaviour.class);
-    private static final int REFRESH_PERIOD = 2000;
+    private static final int REFRESH_PERIOD = 500;
 
     private List<Location> warehouses;
     private List<Location> drones;
@@ -47,7 +47,7 @@ public class ShowDataBehaviour extends TickerBehaviour {
         // Get Customers
         customers.addAll(((ShopAgent) getAgent()).getActiveOrders().values());
         // Update data
-        logger.info("Updating GUI info");
+        //logger.info("Updating GUI info");
         ShopAgentGuiActionsAdapter.actionUpdateInfo(warehouses, drones, customers);
     }
 }
