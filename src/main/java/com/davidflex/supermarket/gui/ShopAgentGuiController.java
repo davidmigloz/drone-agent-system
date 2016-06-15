@@ -68,15 +68,15 @@ public class ShopAgentGuiController implements ShopAgentGuiActions {
         for(Location w : warehouses) {
             drawImage(w.getX(), w.getY(), warehouseImg);
         }
-        // Drones
-        this.drones.setText(drones.size() + "");
-        for(Location d : drones) {
-            drawImage(d.getX(), d.getY(), droneImg);
-        }
         // Customers
         this.customers.setText(customers.size() + "");
         for(Location c : customers) {
             drawImage(c.getX(), c.getY(), customerImg);
+        }
+        // Drones
+        this.drones.setText(drones.size() + "");
+        for(Location d : drones) {
+            drawImage(d.getX(), d.getY(), droneImg);
         }
     }
 
