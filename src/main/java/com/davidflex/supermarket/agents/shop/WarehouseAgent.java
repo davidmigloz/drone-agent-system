@@ -5,7 +5,6 @@ import com.davidflex.supermarket.agents.behaviours.warehouse_agent.RegisterBehav
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.SetupFleetBehavior;
 import com.davidflex.supermarket.agents.utils.JadeUtils;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
-import com.davidflex.supermarket.ontologies.ecommerce.concepts.Item;
 import jade.content.lang.Codec;
 import jade.content.lang.sl.SLCodec;
 import jade.content.onto.BeanOntologyException;
@@ -16,8 +15,8 @@ import jade.wrapper.ContainerController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -43,11 +42,10 @@ public class WarehouseAgent extends Agent {
     private ContainerController container;
 
     //Warehouse Attributes
-    private int         x;
-    private int         y;
-    private int         fleetSize;
-    private List<AID>   fleet;
-    private List<Item>  stock; //List of items in stock (Item got its quantity)
+    private int                 x;
+    private int                 y;
+    private int                 fleetSize;
+    private Map<AID, Boolean>   fleet;
     //TODO update (Important): add stock management
 
 
@@ -55,7 +53,7 @@ public class WarehouseAgent extends Agent {
     // setup - Initialization
     // *************************************************************************
     public WarehouseAgent() {
-        this.fleet = new ArrayList<>(FLEET_SIZE_DEFAULT);
+        this.fleet = new HashMap<>(FLEET_SIZE_DEFAULT);
         this.codec = new SLCodec(0); // fipa-sl0
         try {
             ontology = CompanyOntolagy.getInstance();
@@ -139,7 +137,7 @@ public class WarehouseAgent extends Agent {
         return this.fleetSize;
     }
 
-    public List<AID> getFleet(){
+    public Map<AID, Boolean> getFleet(){
         return this.fleet;
     }
 

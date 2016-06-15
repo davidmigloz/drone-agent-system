@@ -5,12 +5,16 @@ import com.davidflex.supermarket.ontologies.company.predicates.ConfirmPurchaseRe
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+
 
 /**
  * Listen for incoming ConfirmPurchaseRequest request and handle it.
@@ -28,6 +32,10 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
         super(agent);
     }
 
+
+    // *************************************************************************
+    // Core functions
+    // *************************************************************************
     @Override
     public void action() {
         logger.info("Start ListenConfirmPurchaseRequest behavior");
@@ -36,19 +44,26 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
         try {
             request = this.receiveConfirmPurchaseRequest();
             //If null, means no msg received and behavior blocked. (Must quit now)
-            if(request == null){
-                return;
-            }
+            if(request == null){ return; }
             logger.info("ConfirmPurchaseRequest received.");
         } catch (Exception e) {
             logger.error("Unable to receive ConfirmPurchaseRequest message");
             return;
         }
 
-        //TODO Critique: Check if drone available and assign
+        //Select a drone available or error message if no available.
+        logger.info("Request a drone for this order");
+        AID droneAID = this.requestDrone();
+        if(droneAID == null){
+            logger.error("No drone available for the order");
+            //TODO Send error
+        }
+        logger.info("Drone found for the order (AID: "+droneAID+")");
+
+        //TODO load drone and send drone
 
         logger.info("Update stock in warehouse according to the request");
-        this.updateStock(request);
+        //TODO Update: update the actual stock in warehouse (Atm, use infinite)
         logger.info("Stock updated successfully");
     }
 
@@ -104,8 +119,19 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
     // *************************************************************************
     // Asset functions
     // *************************************************************************
-    private void updateStock(ConfirmPurchaseRequest request){
-        //TODO Update (Critique): to implements
-        //Probably add exception in case of error
+
+    /**
+     * Check from the warehouse list which drone is available.
+     *
+     * @return Drone luckily selected or null if any available
+     */
+    private AID requestDrone(){
+        //Check each drone if available
+        for(Map.Entry<AID, Boolean> map : ((WarehouseAgent)getAgent()).getFleet().entrySet()){
+            if(map.getValue()){
+                return map.getKey();
+            }
+        }
+        return null;
     }
 }

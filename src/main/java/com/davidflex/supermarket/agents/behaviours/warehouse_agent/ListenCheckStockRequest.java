@@ -32,6 +32,10 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
         super(agent);
     }
 
+
+    // *************************************************************************
+    // Override / Core functions
+    // *************************************************************************
     @Override
     public void action() {
         logger.info("Start ListenCheckStockRequest behavior");
@@ -137,6 +141,7 @@ public class ListenCheckStockRequest extends CyclicBehaviour{
      */
     private List<Item> processReceivedList(List<Item> received){
         //TODO Update: add actual lock process.
+        //Atm, the warehouse will always be able to handle all the requested items.
         return received; //TODO Critique: to do
     }
 }
