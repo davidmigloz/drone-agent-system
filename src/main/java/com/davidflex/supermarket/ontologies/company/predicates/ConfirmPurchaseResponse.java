@@ -15,6 +15,7 @@ public class ConfirmPurchaseResponse implements Predicate{
     private String  errorMessage;
 
     public ConfirmPurchaseResponse(){
+        this.errorMessage = "";
     }
 
     public boolean isDone() {

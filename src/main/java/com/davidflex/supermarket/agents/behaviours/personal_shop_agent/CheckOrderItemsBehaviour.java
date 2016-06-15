@@ -26,8 +26,9 @@ import java.util.List;
 /**
  * Checks availability and price of all the items of an order.
  * Then it sends back a list with the available items together with their prices
- * to the customer. The load for each warehouse for this order is passed to
- * the started HandlePurchaseBehavior.
+ * to the customer.
+ * The same order can be handled by several warehouses. The load for each warehouse
+ * is created and passed to HandlePurchaseBehavior.
  *
  * Used by PersonalShopAgent.
  *
@@ -35,8 +36,11 @@ import java.util.List;
  * @author  Constantin MASSON
  */
 class CheckOrderItemsBehaviour extends OneShotBehaviour{
-
+    // *************************************************************************
+    // Basics
+    // *************************************************************************
     private static final Logger logger = LoggerFactory.getLogger(CheckOrderItemsBehaviour.class);
+    private final int TIMEOUT_RECEIVE = 10000; //In milliseconds
 
     CheckOrderItemsBehaviour(Agent a) {
         super(a);
@@ -58,19 +62,20 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
             warehouses = getWarehouses();
         } catch (Codec.CodecException | OntologyException ex) {
             logger.error("Unable to recover the list of warehouses.", ex);
+            this.sendPurchaseErrorToCustomer(buyerAID, "No warehouse available.");
             return; //Quit now
         }
 
         //Error if no warehouse available.
         if(warehouses.isEmpty()){
-            logger.error("No warehouses available... Error sending message.");
+            logger.error("No warehouses available... Error message sent.");
             this.sendPurchaseErrorToCustomer(buyerAID, "No warehouse available.");
             return; //Quit now
         }
 
         //Sort warehouses by closet distance
         warehouses.sort(new WarehousesComparator(((PersonalShopAgent) getAgent()).getOrder().getLocation()));
-        logger.info("List of warehouses received (And sorted):");
+        logger.info("List of warehouses received (And sorted).");
         for(Warehouse w : warehouses) {
             logger.debug("Warehouse: " + w.getLocation().getX() + "/" + w.getLocation().getY());
         }
@@ -80,7 +85,7 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
         List<Item> requested = ((PersonalShopAgent)getAgent()).getOrder().getItems();
         List<ConfirmPurchaseRequest> listConfirm; //The future response list
         try {
-            listConfirm = this.requestToWarehouses(warehouses, requested);
+            listConfirm = this.createWarehousesLoad(warehouses, requested);
             logger.info("Availability from warehouses received successfully.");
         } catch (Codec.CodecException | OntologyException ex) {
             logger.error("Unable to send request to warehouse.", ex);
@@ -145,7 +150,7 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
      * @param items         List of items to request
      * @return              The list of ConfirmPurchaseRequest
      */
-    private List<ConfirmPurchaseRequest> requestToWarehouses(
+    private List<ConfirmPurchaseRequest> createWarehousesLoad(
             List<Warehouse> warehouseList, List<Item> items)
             throws Codec.CodecException, OntologyException {
         List<ConfirmPurchaseRequest> listConfirm = new ArrayList<>();
@@ -155,8 +160,10 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
         //Browse each warehouse for item availability and price.
         for(Warehouse w: warehouseList){
             this.sendListToWarehouse(w.getWarehouseAgent(), remaining);
-            //TODO Update: possibly add timeout (atm, if error, will wait infinitely)
-            received = this.blockReceiveListFromWarehouse(w.getWarehouseAgent());
+            received = this.blockReceiveListFromWarehouse(
+                    w.getWarehouseAgent(),
+                    TIMEOUT_RECEIVE
+            );
 
             //If this warehouse can't handle any items, switch to next.
             if(received == null || received.isEmpty()){ continue; }
@@ -250,19 +257,19 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
     /**
      * Wait for a message from the given warehouse.
-     * Message received should be a valid response for sock item, otherwise,
+     * Message received should be a valid response for stock item, otherwise,
      * a empty list will be returned. (CheckStockItemsResponse expected)
      *
-     * @param warehouse Warehouse to wait for.
-     * @return List of items (With they quantity)
+     * @param warehouse             Warehouse to wait for
+     * @param timeout               Timeout before stopping blocking
+     * @return                      List of items (With they quantity)
      * @throws Codec.CodecException if unable to recover received message
-     * @throws OntologyException    if unable to receover received message
+     * @throws OntologyException    if unable to recover received message
      */
-    private List<Item> blockReceiveListFromWarehouse(AID warehouse)
+    private List<Item> blockReceiveListFromWarehouse(AID warehouse, int timeout)
             throws Codec.CodecException, OntologyException {
-        //TODO update: possibly add a timeout
         MessageTemplate mt  = MessageTemplate.MatchSender(warehouse);
-        ACLMessage      msg = this.getAgent().blockingReceive(mt);
+        ACLMessage      msg = this.getAgent().blockingReceive(mt, timeout);
         ContentElement  ce  = getAgent().getContentManager().extractContent(msg);
         if(ce instanceof CheckStockItemsResponse){
             CheckStockItemsResponse response = (CheckStockItemsResponse)ce;
@@ -341,8 +348,10 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
             GetListWarehousesResponse wResonse = (GetListWarehousesResponse) ce;
             list = wResonse.getWarehouses();
         } else {
-            logger.error("GetListWarehousesResponse expected but wrong type received. " +
-                    "The list of warehouses will probably be false.");
+            logger.error(
+                    "GetListWarehousesResponse expected but wrong type received. " +
+                    "The list of warehouses will probably be wrong (Empty)."
+            );
         }
         return list != null ? list : new ArrayList<>(0);
     }

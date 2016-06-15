@@ -4,6 +4,7 @@ import com.davidflex.supermarket.agents.shop.WarehouseAgent;
 import com.davidflex.supermarket.ontologies.company.actions.AssignOrder;
 import com.davidflex.supermarket.ontologies.company.concepts.Order;
 import com.davidflex.supermarket.ontologies.company.predicates.ConfirmPurchaseRequest;
+import com.davidflex.supermarket.ontologies.company.predicates.ConfirmPurchaseResponse;
 import jade.content.ContentElement;
 import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
@@ -47,10 +48,14 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
         try {
             request = this.receiveConfirmPurchaseRequest();
             //If null, means no msg received and behavior blocked. (Must quit now)
-            if(request == null){ return; }
+            if(request == null){
+                block();
+                return;
+            }
             logger.info("ConfirmPurchaseRequest received.");
         } catch (Exception e) {
-            logger.error("Unable to receive ConfirmPurchaseRequest message");
+            logger.error("Unable to receive ConfirmPurchaseRequest message", e);
+            //TODO Update (Important) Send error
             return;
         }
 
@@ -58,25 +63,31 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
         logger.info("Request a drone for this order");
         AID droneAID = this.requestDrone();
         if(droneAID == null){
-            logger.error("No drone available for the order");
-            //TODO Important Send error
+            logger.error("No drone available for the order:"+request.getOrder().getId());
+            //TODO Update (Important) Send error
         }
-        logger.info("Drone found for the order (AID: "+droneAID+")");
+        logger.info("Drone ("+droneAID+") set to order: "+request.getOrder().getId());
 
-        //Recover the order and send it to the drone
-        Order order = request.getOrder();
-        order.setItems(request.getItems()); //Trick due to old design
-        try {
-            this.sendOrderToDrone(order, droneAID);
-        } catch (Codec.CodecException | OntologyException ex) {
-            logger.error("Error while sending the order to the drone");
-            //TODO important: Error to handle
-            return;
-        }
 
         logger.info("Update stock in warehouse according to the request");
         //TODO Update: update the actual stock in warehouse (Atm, use infinite)
         logger.info("Stock updated successfully");
+
+        //Recover the order and send it to the drone
+        Order order = request.getOrder();
+        // DEV NOTE:
+        // in request, order is the original order and item the list drone
+        // must actually deal with.
+        // Since in the assignOrder to drone, the order is altered with only
+        // the items for the drone, we must here change the order inside list
+        // with the actual list he is supposed to deal with.
+        order.setItems(request.getItems()); //See DEV NOTE above.
+        try {
+            this.sendOrderToDrone(order, droneAID);
+        } catch (Codec.CodecException | OntologyException ex) {
+            logger.error("Error while sending the order to the drone");
+            //TODO Update (Important): Error to handle
+        }
     }
 
 
@@ -96,15 +107,9 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
      */
     private ConfirmPurchaseRequest receiveConfirmPurchaseRequest() throws Exception {
         //Message should be a request with valid ontology
-        MessageTemplate mt = MessageTemplate.and(
-                MessageTemplate.MatchPerformative(ACLMessage.CONFIRM),
-                MessageTemplate.MatchOntology(
-                        ((WarehouseAgent)getAgent()).getOntology().getName()
-                )
-        );
-        ACLMessage msg = this.getAgent().receive(mt);
+        MessageTemplate mt  = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+        ACLMessage      msg = this.getAgent().receive(mt);
         if(msg == null){
-            block();
             return null;
         }
 
@@ -117,15 +122,12 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
                     "Message received is a CONFIRM but should be ConfirmPurchaseRequest"
             );
         }
-        ConfirmPurchaseRequest c = ((ConfirmPurchaseRequest) ce);
 
+        //TODO Update: add a check if the ConfirmPurchaseRequest is well for this warehouse.
+        //(In the request, there is a 'warehouse' attributes, it should be the
+        //same as current getAgent().getAID() (Test the localName)
         //Check whether received message was actually destined to this warehouse.
-        if(c.getWarehouse().getWarehouseAgent() != this.getAgent().getAID()){
-            //TODO Temporary removed
-            //logger.error("ConfirmPurchaseRequest received with wrong AID");
-            //throw new Exception("ConfirmPurchaseRequest received with wrong AID");
-        }
-        return (ConfirmPurchaseRequest) ce;
+        return ((ConfirmPurchaseRequest) ce);
     }
 
     /**
@@ -162,7 +164,9 @@ public class ListenConfirmPurchaseRequest extends CyclicBehaviour{
     private AID requestDrone(){
         //Check each drone if available
         for(Map.Entry<AID, Boolean> map : ((WarehouseAgent)getAgent()).getFleet().entrySet()){
+            //If drone is available, take it and change its state
             if(map.getValue()){
+                map.setValue(false); //No more available
                 return map.getKey();
             }
         }
