@@ -41,12 +41,16 @@ public class DroneAgent extends Agent {
     private AID         shopAgent;
     private Location    position;
     private Order       order; //Order drone is in currently charge
-    private List<Item>  load; //Current drone load (Item from the order, in the drone)
+    private List<Item>  load; //TODO Current drone load (Item from the order, in the drone)
 
 
+    /**
+     * Create a new drone without order.
+     */
     public DroneAgent() {
-        this.load   = new ArrayList<>();
-        this.codec  = new SLCodec(0); // fipa-sl0
+        this.order      = null;
+        this.load       = new ArrayList<>();
+        this.codec      = new SLCodec(0); // fipa-sl0
         try {
             ontology = CompanyOntolagy.getInstance();
         } catch (BeanOntologyException e) {
@@ -57,6 +61,15 @@ public class DroneAgent extends Agent {
 
     @Override
     protected void setup() {
+        //Process parameters
+        try {
+            Object[] args = getArguments();
+            this.processParameters(args);
+        } catch (Exception e) {
+            logger.error("Unable to start drone agent: "+getLocalName()+
+                    "\nUsage: shopName, warehouseName, x, y");
+            doDelete();
+        }
         // Setup content manager
         getContentManager().registerLanguage(codec);
         getContentManager().registerOntology(ontology, ShopOntology.ONTOLOGY_NAME);
@@ -64,12 +77,28 @@ public class DroneAgent extends Agent {
     }
 
     /**
-     * Check whether this drone is available to carry an order.
+     * Process the given parameters and set drone values.
      *
-     * @return true if available for an order, otherwise, return false
+     * @param args          Array of parameters
+     * @throws IllegalArgumentException If invalid parameters
      */
-    public boolean isAvailable(){
-        return this.order == null;
+    private void processParameters(Object[] args) throws Exception {
+        if(args == null || args.length != 4){
+            throw new IllegalArgumentException("Invalid parameters for DroneAgent");
+        }
+        //Recover parameters from args
+        String shopAgentName = (String) args[0];
+        String warehouseName = (String) args[1];
+        int x = Integer.parseInt((String) args[2]);
+        int y = Integer.parseInt((String) args[3]);
+
+        //Set drone values
+        Location location   = new Location(x, y);
+        this.shopAgent      = new AID(shopAgentName, AID.ISLOCALNAME);
+        this.warehouse      = new Warehouse(new AID(warehouseName, AID.ISLOCALNAME), location);
+        this.position       = location;
+
+        logger.debug("Drone successfully created from parameters");
     }
 
 
