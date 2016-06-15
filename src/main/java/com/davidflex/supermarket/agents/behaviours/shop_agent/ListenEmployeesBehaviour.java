@@ -64,7 +64,8 @@ public class ListenEmployeesBehaviour extends CyclicBehaviour {
                 } else if (ce instanceof InformPosition) {
                     // Register position of drone
                     InformPosition ip = (InformPosition) ce;
-                    logger.info("Drone " + msg.getSender().getLocalName() + "is " + ip.toString());
+                    logger.info("Drone " + msg.getSender().getLocalName() + "is "
+                            + ip.getPosition().toString());
                     ((ShopAgent) getAgent()).setDronePosition(ip.getDrone(), ip.getPosition());
                 } else {
                     logger.error("Wrong message received.");

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 class FlyingBehaviour extends TickerBehaviour {
 
     private static final Logger logger = LoggerFactory.getLogger(TickerBehaviour.class);
-    private static final int SPEED = 500;
+    private static final int SPEED = 100;
 
     private Behaviour manager;
     private Location target;
@@ -32,6 +32,7 @@ class FlyingBehaviour extends TickerBehaviour {
             move(target);
         } else {
             // Arrived to target!
+            logger.debug("Arrived to target!");
             manager.restart();
             getAgent().removeBehaviour(this);
         }

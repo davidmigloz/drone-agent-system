@@ -9,6 +9,7 @@ import jade.content.lang.Codec;
 import jade.content.onto.OntologyException;
 import jade.content.onto.basic.Action;
 import jade.core.Agent;
+import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.SimpleBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -25,20 +26,24 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
     private static final Logger logger = LoggerFactory.getLogger(HandleDeliverBehaviour.class);
 
     private int step;
+    private Behaviour informPositionBehaviour;
 
     public HandleDeliverBehaviour(Agent a) {
         super(a);
         step = 0;
+        // Inform position periodically
+        informPositionBehaviour = new InformPositionBehaviour(getAgent());
     }
 
     @Override
     public void action() {
-        switch (step){
+        switch (step) {
             case 0:
                 //Assign order
-                logger.info("Assign order to the drone");
+                logger.info("Wait for an order...");
                 try {
                     this.blockReceiveReceiveOrderMessage();
+                    logger.info("Assign order to the drone");
                 } catch (Codec.CodecException | OntologyException ex) {
                     logger.error("Unable to recover the received message");
                     //TODO Important To handle
@@ -49,6 +54,7 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
             case 1:
                 // Fly to taget
                 logger.info("Flying to target " + getOrder().getLocation());
+                getAgent().addBehaviour(informPositionBehaviour);
                 getAgent().addBehaviour(new FlyingBehaviour(getAgent(), this,
                         getOrder().getLocation()));
                 step++;
@@ -62,7 +68,7 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
                 break;
             case 3:
                 // Wait until the order is delivered
-                if(getOrder().isDelivered()) {
+                if (getOrder().isDelivered()) {
                     logger.info("Order is delivered!");
                     step++;
                 } else {
@@ -76,13 +82,23 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
                 step++;
                 block();
                 break;
+            case 5:
+                // Check that it arrives
+                if (!getActualPosition().equals(getWarehouseLocation())) {
+                    logger.info("Check that it arrives (IN BLOCK)");
+                    block();
+                } else {
+                    logger.info("Check that it arrives (QRRIVED)");
+                    step++;
+                }
         }
     }
 
     @Override
     public boolean done() {
-        if(step > 4) {
+        if (step > 5) {
             // Drone in warehouse -> Unregister from shopAgent
+            getAgent().removeBehaviour(informPositionBehaviour);
             getAgent().addBehaviour(new UnregisterBehaviour());
             step = 0;
         }
@@ -97,29 +113,29 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
      */
     private void blockReceiveReceiveOrderMessage() throws Codec.CodecException, OntologyException {
         MessageTemplate mt = MessageTemplate.and(
-                MessageTemplate.MatchSender(((DroneAgent)getAgent()).getWarehouse().getWarehouseAgent()),
+                MessageTemplate.MatchSender(((DroneAgent) getAgent()).getWarehouse().getWarehouseAgent()),
                 MessageTemplate.MatchPerformative(ACLMessage.REQUEST)
         );
         //Wait for the message
         ACLMessage msg = getAgent().blockingReceive(mt);
         ContentElement ce = getAgent().getContentManager().extractContent(msg);
-        if(!(ce instanceof Action)){
+        if (!(ce instanceof Action)) {
             logger.error("Drone receive wrong ");
             return;
             //TODO Important To handle
         }
 
         //Recover the message content
-        Action a = (Action)ce;
-        if(!(a.getAction() instanceof AssignOrder)){
+        Action a = (Action) ce;
+        if (!(a.getAction() instanceof AssignOrder)) {
             logger.error("Drone receive wrong ");
             return;
             //TODO Important To handle
         }
 
         //Recover the order and set it in the drone
-        AssignOrder order = (AssignOrder)a.getAction();
-        ((DroneAgent)getAgent()).setOrder(order.getOrder());
+        AssignOrder order = (AssignOrder) a.getAction();
+        ((DroneAgent) getAgent()).setOrder(order.getOrder());
     }
 
     /**
@@ -127,6 +143,13 @@ public class HandleDeliverBehaviour extends SimpleBehaviour {
      */
     private Location getWarehouseLocation() {
         return ((DroneAgent) getAgent()).getWarehouse().getLocation();
+    }
+
+    /**
+     * Get actual position.
+     */
+    private Location getActualPosition() {
+        return ((DroneAgent) getAgent()).getPosition();
     }
 
     /**

@@ -31,7 +31,7 @@ class DeliverOrderBehaviour extends SimpleBehaviour {
         super(a);
         this.manager = manager;
         step = 0;
-        mt = MessageTemplate.MatchConversationId(getOrder().getId() + "");
+        mt = MessageTemplate.MatchSender(getOrder().getBuyer());
     }
 
     @Override
@@ -45,10 +45,12 @@ class DeliverOrderBehaviour extends SimpleBehaviour {
                 break;
             case 1:
                 // Wait to DeliverResponse
+                logger.info("Waiting for DeliverResponse...");
                 ACLMessage msg = getAgent().receive(mt);
                 if(msg != null) {
                     // Response received -> order completed -> comeback warehouse
                     logger.info("Deliver response rececived!");
+                    getOrder().setDelivered(true);
                     manager.restart();
                     step++;
                 } else {

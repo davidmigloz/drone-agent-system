@@ -46,11 +46,12 @@ class HandleDeliverBehaviour extends SimpleBehaviour {
     public void action() {
         try {
             // Get request
-            ACLMessage msg = getAgent().blockingReceive(mt);
+            ACLMessage msg = getAgent().blockingReceive();
             ContentElement ce = getAgent().getContentManager().extractContent(msg);
             if (ce instanceof DeliverRequest) {
                 DeliverRequest dr = (DeliverRequest) ce;
                 updateStatus(dr.getItems());
+                logger.debug("DeliverRequest received");
             }
             // Send response
             sendResponse(msg.getSender());
@@ -99,12 +100,14 @@ class HandleDeliverBehaviour extends SimpleBehaviour {
      */
     private void sendResponse(AID drone)
             throws Codec.CodecException, OntologyException {
+        logger.debug("Sending deliver response...");
         // Prepare message
         ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
         msg.setSender(getAgent().getAID());
         msg.addReceiver(drone);
         msg.setLanguage(((PersonalAgent) getAgent()).getCodec().getName());
         msg.setOntology(((PersonalAgent) getAgent()).getOntology().getName());
+        msg.setConversationId(((PersonalAgent) getAgent()).getOrderId() + "");
         // Fill the content and send the message
         DeliverResponse respond = new DeliverResponse();
         getAgent().getContentManager().fillContent(msg, respond);
