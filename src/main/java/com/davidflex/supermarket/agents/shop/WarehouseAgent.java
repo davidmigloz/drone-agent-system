@@ -1,6 +1,7 @@
 package com.davidflex.supermarket.agents.shop;
 
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.ListenCheckStockRequest;
+import com.davidflex.supermarket.agents.behaviours.warehouse_agent.ListenConfirmPurchaseRequest;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.RegisterBehaviour;
 import com.davidflex.supermarket.agents.behaviours.warehouse_agent.SetupFleetBehavior;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
@@ -81,6 +82,7 @@ public class WarehouseAgent extends Agent {
         this.addBehaviour(new RegisterBehaviour(this, this.shopAgent));
         this.addBehaviour(new SetupFleetBehavior(this));
         this.addBehaviour(new ListenCheckStockRequest(this));
+        this.addBehaviour(new ListenConfirmPurchaseRequest(this));
     }
 
     /**

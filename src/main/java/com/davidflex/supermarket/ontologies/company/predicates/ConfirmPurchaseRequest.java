@@ -19,7 +19,7 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class ConfirmPurchaseRequest implements Predicate{
     private Order order; //The original order
-    private List<Item>  items; //List of item to actually buy (With its quantity)
+    private List<Item> items; //List of item to actually buy (With its quantity)
     private Warehouse warehouse; //Warehouse in charge of this sub-order
 
     public ConfirmPurchaseRequest() {

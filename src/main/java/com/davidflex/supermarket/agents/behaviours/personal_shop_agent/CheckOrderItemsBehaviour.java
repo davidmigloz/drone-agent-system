@@ -163,7 +163,8 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
             //Otherwise, create the ConfirmPurchaseRequest for this warehouse
             ConfirmPurchaseRequest confirm = new ConfirmPurchaseRequest(
-                    ((PersonalShopAgent)getAgent()).getOrder(), received, w);
+                    ((PersonalShopAgent)getAgent()).getOrder(), received, w
+            );
             listConfirm.add(confirm);
 
             //Check the remaining items, continue if still some.

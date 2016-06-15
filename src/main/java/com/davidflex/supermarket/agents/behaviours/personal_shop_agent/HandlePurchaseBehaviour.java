@@ -72,9 +72,9 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
             }
 
             //Send done confirmation to buyer
-            //TODO we could wait for a confirmation from warehouse.
+            //TODO Update: confirmation from warehouse.
             logger.info("Send 'done' to customer.");
-            this.sendDone(buyerAID);
+            this.sendDone(buyerAID); //TODO TO change with update
         }
         catch (Codec.CodecException | OntologyException ex) {
             logger.error("Unable to process the received list from customer...");

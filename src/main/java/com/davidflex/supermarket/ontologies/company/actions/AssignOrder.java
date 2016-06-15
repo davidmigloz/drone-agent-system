@@ -5,7 +5,7 @@ import jade.content.AgentAction;
 
 /**
  * Assign order to personalShopAgent.
- * Used by ShopAgent.
+ * Used by ShopAgent and DroneAgent
  */
 @SuppressWarnings("unused")
 public class AssignOrder implements AgentAction {
