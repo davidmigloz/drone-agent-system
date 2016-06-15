@@ -2,7 +2,6 @@ package com.davidflex.supermarket.agents.behaviours.warehouse_agent;
 
 import com.davidflex.supermarket.agents.shop.DroneAgent;
 import com.davidflex.supermarket.agents.shop.WarehouseAgent;
-import com.davidflex.supermarket.ontologies.company.concepts.Warehouse;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;

@@ -1,5 +1,6 @@
 package com.davidflex.supermarket.agents.shop;
 
+import com.davidflex.supermarket.agents.behaviours.drone_agent.HandleDeliverBehaviour;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagy;
 import com.davidflex.supermarket.ontologies.company.CompanyOntolagyVocabulary;
 import com.davidflex.supermarket.ontologies.company.concepts.Order;
@@ -41,7 +42,6 @@ public class DroneAgent extends Agent {
     private AID         shopAgent;
     private Location    position;
     private Order       order; //Order drone is in currently charge
-    private List<Item>  load; //TODO Current drone load (Item from the order, in the drone)
 
 
     /**
@@ -49,7 +49,6 @@ public class DroneAgent extends Agent {
      */
     public DroneAgent() {
         this.order      = null;
-        this.load       = new ArrayList<>();
         this.codec      = new SLCodec(0); // fipa-sl0
         try {
             ontology = CompanyOntolagy.getInstance();
@@ -74,6 +73,8 @@ public class DroneAgent extends Agent {
         getContentManager().registerLanguage(codec);
         getContentManager().registerOntology(ontology, ShopOntology.ONTOLOGY_NAME);
         getContentManager().registerOntology(ontology, CompanyOntolagyVocabulary.ONTOLOGY_NAME);
+
+        this.addBehaviour(new HandleDeliverBehaviour(this));
     }
 
     /**
