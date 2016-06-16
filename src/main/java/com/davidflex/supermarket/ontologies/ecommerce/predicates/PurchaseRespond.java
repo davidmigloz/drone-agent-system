@@ -12,12 +12,14 @@ import jade.content.Predicate;
 @SuppressWarnings("unused")
 public class PurchaseRespond implements Predicate {
 
+	private long orderID;
 	private List<Item> items;
 
 	public PurchaseRespond() {
 	}
 
-	public PurchaseRespond(List<Item> items) {
+	public PurchaseRespond(long orderID, List<Item> items) {
+		this.orderID = orderID;
 		this.items = items;
 	}
 
@@ -27,5 +29,13 @@ public class PurchaseRespond implements Predicate {
 
 	public void setItem(List<Item> i) {
 		items = i;
+	}
+
+	public long getOrderID() {
+		return orderID;
+	}
+
+	public void setOrderID(long orderID) {
+		this.orderID = orderID;
 	}
 }

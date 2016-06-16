@@ -20,7 +20,6 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.FIPAException;
 import jade.wrapper.ContainerController;
-import jade.wrapper.StaleProxyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,14 +71,6 @@ public class ShopAgent extends Agent {
         } catch (FIPAException e) {
             logger.error("Error at registering in DF", e);
             doDelete();
-        }
-
-        // Launch GUI
-        try {
-            getContainerController().createNewAgent("ShopAgentGUI",
-                    ShopAgentGuiAgent.class.getName(), new Object[]{});
-        } catch (StaleProxyException e) {
-            logger.error("Error launching GUI", e);
         }
 
         // Add behaviours
