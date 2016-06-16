@@ -61,7 +61,7 @@ class FlyingBehaviour extends TickerBehaviour {
             // Move left
             getActualPosition().moveLeft();
         }
-        logger.info(getAgent().getLocalName() + " | Position: " + getActualPosition());
+        //logger.info(getAgent().getLocalName() + " | Position: " + getActualPosition());
     }
 
     /**

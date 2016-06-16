@@ -60,6 +60,7 @@ class NegociationBehaviour extends OneShotBehaviour {
                 // Read content
                 PurchaseRespond pr = (PurchaseRespond) ce;
                 // Check items
+                ((PersonalAgent) getAgent()).setOrderId(pr.getOrderID());
                 finalItemList = checkItems(pr.getItem());
             } else if (ce instanceof PurchaseError) {
                 logger.error("Error occurred (PurchaseError received)");
@@ -81,6 +82,7 @@ class NegociationBehaviour extends OneShotBehaviour {
         if(finalItemList.size() == 0) {
             logger.info("No items to buy");
             ((PersonalAgent) getAgent()).cancelOrder("No items to buy.");
+            // TODO send cancel message to personalShopAgent
             return;
         }
 
@@ -99,7 +101,7 @@ class NegociationBehaviour extends OneShotBehaviour {
                     // Order is done
                     logger.info("Order done.");
                     ((PersonalAgent) getAgent()).printStatus("Order registered!");
-                    ((PersonalAgent) getAgent()).printStatus("Order is being prepared for shipping.");
+                    ((PersonalAgent) getAgent()).printStatus("Order is being delivered...");
                     // Prepare for delivering
                     getAgent().addBehaviour(new HandleDeliverBehaviour(getAgent()));
                 } else {
@@ -180,7 +182,7 @@ class NegociationBehaviour extends OneShotBehaviour {
                     } else {
                         // If price ok -> buy it
                         result.add(itShop);
-                        itUser.setStatus("Buying...");
+                        itUser.setStatus("In progress...");
                     }
                 }
             }

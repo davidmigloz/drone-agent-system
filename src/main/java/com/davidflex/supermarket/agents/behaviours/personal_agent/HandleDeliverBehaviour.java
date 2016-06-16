@@ -46,7 +46,7 @@ class HandleDeliverBehaviour extends SimpleBehaviour {
     public void action() {
         try {
             // Get request
-            ACLMessage msg = getAgent().blockingReceive();
+            ACLMessage msg = getAgent().blockingReceive(mt);
             ContentElement ce = getAgent().getContentManager().extractContent(msg);
             if (ce instanceof DeliverRequest) {
                 DeliverRequest dr = (DeliverRequest) ce;
@@ -63,6 +63,7 @@ class HandleDeliverBehaviour extends SimpleBehaviour {
     @Override
     public boolean done() {
         if(orderItems.isEmpty()) {
+            logger.info("Order completed!!!");
             ((PersonalAgent) getAgent()).printStatus("Order completed!!!");
             return true;
         }

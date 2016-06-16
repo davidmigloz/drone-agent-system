@@ -34,7 +34,7 @@ public class SetupFleetBehavior extends OneShotBehaviour{
 
         //Create all drone agent.
         for(int k=0; k<((WarehouseAgent)getAgent()).getFleetSize(); k++){
-            String droneName = "drone-"+k;
+            String droneName = getAgent().getLocalName() + "-drone-"+k;
             try{
                 //Try to create a drone agent.
                 getAgent().getContainerController().createNewAgent(

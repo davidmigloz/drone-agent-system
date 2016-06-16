@@ -226,7 +226,8 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
         msg.setLanguage(((PersonalShopAgent) getAgent()).getCodec().getName());
         msg.setOntology(((PersonalShopAgent) getAgent()).getShopOntologyName());
         // Fill the content and send the message
-        PurchaseRespond respond = new PurchaseRespond(items);
+        long orderID = ((PersonalShopAgent) getAgent()).getOrder().getId();
+        PurchaseRespond respond = new PurchaseRespond(orderID, items);
         getAgent().getContentManager().fillContent(msg, respond);
         getAgent().send(msg);
     }

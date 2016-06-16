@@ -39,7 +39,7 @@ public class CustomerGui extends Application implements ShopOntologyVocabulary {
         loader.setLocation(getClass().getResource("/fxml/gui.fxml"));
         Parent root = loader.load();
 
-        primaryStage.setTitle("Personal Agent");
+        primaryStage.setTitle("Customer GUI");
         primaryStage.setResizable(false);
 
         final Scene scene = new Scene(root);
