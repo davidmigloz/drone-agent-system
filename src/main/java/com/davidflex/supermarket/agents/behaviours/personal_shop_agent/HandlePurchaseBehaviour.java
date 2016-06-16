@@ -51,7 +51,8 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
 
     // *************************************************************************
     // Override function
-    // *************************************************************************
+    // *****************************
+    // ********************************************
     @Override
     public void action() {
         logger.info("Start handlePurchaseBehavior in PersonalShopAgent.");
