@@ -62,7 +62,8 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
             logger.info("Wait customer's list with items he actually wants to buy");
             List<Item> listItems = this.blockReceivePurchaseResponse(buyerAID);
             logger.info("List from customer received. Update load warehouses");
-            this.updateWarehousesLoad(listItems);
+            //this.updateWarehousesLoad(listItems); //TODO Tmp deleted
+            this.listWarehousesLoad.get(0).setItems(listItems); //TMP: manage one warehouse
             logger.info("Warehouses load updated.");
 
             //Send to each warehouse its load
@@ -102,10 +103,16 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
      * @param listItems List of items user actually wants to buy
      */
     private void updateWarehousesLoad(List<Item> listItems){
+        //TODO To update (No working atm: to finish)
         int index, iQ, wQ;
+        List<Item> originalStock;
 
         //Browse each warehouse load.
+        //Reset item load for each warehouse and update it with actual item bought
         for(ConfirmPurchaseRequest load : this.listWarehousesLoad){
+            originalStock = load.getItems(); //Remember the original load for this warehouse.
+            load.setItems(new ArrayList<>()); //Reset the load for this warehouse
+
             //Compare warehouse list of item with customer list.
             for(Item item : listItems){
                 //Skipp if this item has already been assigned.
