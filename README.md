@@ -2,7 +2,7 @@
 
 Projects for Agent Systems and Applications at Warsaw University of Technology.
 
-![Screenshot](https://raw.githubusercontent.com/davidmigloz/supermarket-agent-system/master/src/main/resources/img/Screenshot.gif)
+![Screenshot](https://raw.githubusercontent.com/davidmigloz/supermarket-agent-system/master/src/main/resources/img/Screenshot.jpg)
 
 #### Team 
 - **Constantin Grinda**
