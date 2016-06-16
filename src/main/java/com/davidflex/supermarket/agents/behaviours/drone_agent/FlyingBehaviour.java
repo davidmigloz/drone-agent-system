@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 class FlyingBehaviour extends TickerBehaviour {
 
     private static final Logger logger = LoggerFactory.getLogger(TickerBehaviour.class);
-    private static final int SPEED = 100;
+    private static final int SPEED = 300;
 
     private Behaviour manager;
     private Location target;

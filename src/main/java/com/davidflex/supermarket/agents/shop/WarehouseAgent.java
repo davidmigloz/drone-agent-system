@@ -34,7 +34,7 @@ public class WarehouseAgent extends Agent {
     private static final Logger logger = LoggerFactory.getLogger(ShopAgent.class);
     private static int FLEET_SIZE_MIN       = 2;
     private static int FLEET_SIZE_MAX       = 42;
-    private static int FLEET_SIZE_DEFAULT   = 5;
+    private static int FLEET_SIZE_DEFAULT   = 10;
 
     //Attributes Jade
     private Codec               codec;
