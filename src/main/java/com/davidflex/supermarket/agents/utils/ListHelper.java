@@ -24,7 +24,7 @@ public class ListHelper {
             return -1;
         }
         for (int k = 0; k < list.size(); k++) {
-            if(elt.getClass().getSimpleName().equals(elt.getClass().getSimpleName())){
+            if(list.get(k).getClass().getSimpleName().equals(elt.getClass().getSimpleName())){
                 return k;
             }
         }
