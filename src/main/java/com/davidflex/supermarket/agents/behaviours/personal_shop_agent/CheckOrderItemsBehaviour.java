@@ -40,7 +40,7 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
     // Basics
     // *************************************************************************
     private static final Logger logger = LoggerFactory.getLogger(CheckOrderItemsBehaviour.class);
-    private final int TIMEOUT_RECEIVE = 10000; //In milliseconds
+    private final int TIMEOUT_RECEIVE = 20000; //In milliseconds
 
     CheckOrderItemsBehaviour(Agent a) {
         super(a);
@@ -106,10 +106,11 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
                 if(index == -1){
                     cList.add(i);
                 }
-                //Otherwise, just add its quantity
-                else {
+                //If item already in cList and quantity should be updated
+                else if(cList.get(index).getClass().getSimpleName().equals(i.getClass().getSimpleName())){
                     cList.get(index).setQuantity(cList.get(index).getQuantity()+i.getQuantity());
                 }
+                //Otherwise, skipp this item
             }
         }
 
@@ -175,7 +176,8 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
             listConfirm.add(confirm);
 
             //Check the remaining items, continue if still some.
-            remaining = checkMissingItems(received, remaining);
+            //TODO Update: temporary removed (Function not working)
+            //remaining = checkMissingItems(received, remaining);
             if(remaining == null || remaining.isEmpty()){
                 break; //Every item has been assigned to a warehouse.
             }
@@ -295,6 +297,7 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
      * @throws NullPointerException if received is null
      */
     private List<Item> checkMissingItems(List<Item> received, List<Item> expected){
+        //TODO Important: Integrity to test (Function is not fully tested)
         List<Item> list = new ArrayList<>();
         int remainStock, index;
 
@@ -309,7 +312,8 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
             remainStock = item.getQuantity() - received.get(index).getQuantity();
             //If some items remain for this type
             if(remainStock > 0){
-                Item i = received.get(index);
+                Item i = received.get(index).clone();
+                i.setPrice(received.get(index).getPrice());
                 i.setQuantity(remainStock);
                 list.add(i);
             }

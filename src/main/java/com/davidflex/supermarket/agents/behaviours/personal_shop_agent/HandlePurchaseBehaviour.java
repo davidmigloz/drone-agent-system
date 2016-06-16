@@ -97,7 +97,7 @@ class HandlePurchaseBehaviour extends OneShotBehaviour{
      * cancelled (Price to high etc). The new warehouse load must be updated
      * to manage these changes.
      *
-     * After this process, the given listItems will be empty.
+     * After this process, the given listItems will be altered. (Items quantity)
      *
      * @param listItems List of items user actually wants to buy
      */
