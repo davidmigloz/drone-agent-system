@@ -177,10 +177,13 @@ class CheckOrderItemsBehaviour extends OneShotBehaviour{
 
             //Check the remaining items, continue if still some.
             //TODO Update: temporary removed (Function not working)
-            //remaining = checkMissingItems(received, remaining);
+            break; //Currently work with only one warehouse
+            /*
+            remaining = checkMissingItems(received, remaining);
             if(remaining == null || remaining.isEmpty()){
                 break; //Every item has been assigned to a warehouse.
             }
+            */
         }
         return listConfirm;
     }
