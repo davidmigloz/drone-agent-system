@@ -122,8 +122,8 @@ public class CustomerGui extends Application implements ShopOntologyVocabulary {
                     }
                     break;
                 case RICE:
-                    if (!increaseQuantity(Rabbit.class.getSimpleName(), maxPrice, quantity)) {
-                        itemsToBuy.add(new Rabbit(maxPrice, quantity));
+                    if (!increaseQuantity(Rice.class.getSimpleName(), maxPrice, quantity)) {
+                        itemsToBuy.add(new Rice(maxPrice, quantity));
                     }
                     break;
                 case SAFFRON:
