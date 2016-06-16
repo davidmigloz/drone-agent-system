@@ -2,8 +2,6 @@
 
 Projects for Agent Systems and Applications at Warsaw University of Technology.
 
-![Screenshot](https://raw.githubusercontent.com/davidmigloz/supermarket-agent-system/master/src/main/resources/img/shop-gui.jpg)
-
 #### Team 
 - **Constantin Grinda**
 - **David Miguel**
@@ -14,6 +12,16 @@ Projects for Agent Systems and Applications at Warsaw University of Technology.
 - [2º presentation](https://drive.google.com/open?id=12V8Tjkx-c9VSXX1L477lBETtkwmw4xSInk_B-8T2T2s)
 - [3º presentation](https://drive.google.com/open?id=1DdmBigvGwiWSKQNg1pgzymJv6_ncaHGVgLyAK2GzOmM)
 - [Final presentation](https://drive.google.com/open?id=1hLi-I9B4hDYvsHSdTCRLf1VoHezDzqg9uBuCVAfICds)
+
+#### Screenshots
+
+##### Shop
+
+![Screenshot](https://raw.githubusercontent.com/davidmigloz/supermarket-agent-system/master/src/main/resources/img/shop-gui.jpg)
+
+##### CustomerGuiAgent
+
+![Screenshot](https://raw.githubusercontent.com/davidmigloz/supermarket-agent-system/master/src/main/resources/img/customer-gui.jpg)
 
 #### Download
 
